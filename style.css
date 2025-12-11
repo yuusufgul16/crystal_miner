@@ -589,6 +589,17 @@ body {
     padding: 0;
 }
 
+.grid-container.dense {
+    gap: 4px;
+    max-width: 650px;
+}
+
+.grid-container.dense .tile {
+    font-size: 1rem;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
 .tile {
     aspect-ratio: 1;
     position: relative;

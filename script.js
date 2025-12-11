@@ -6,7 +6,8 @@
     const screens = {
         start: document.getElementById('start-screen'),
         levels: document.getElementById('level-screen'),
-        game: document.getElementById('game-screen')
+        game: document.getElementById('game-screen'),
+        achievements: document.getElementById('achievements-screen')
     };
 
     const ui = {
@@ -17,19 +18,20 @@
         grid: document.getElementById('grid'),
         score: document.getElementById('score'),
         timer: document.getElementById('timer'),
-        mission: document.querySelector('.mission .text'),
+        mission: document.querySelector('#mission .text'),
         progress: document.getElementById('progress'),
         progressText: document.getElementById('progress-text'),
         combo: document.getElementById('combo'),
         comboValue: document.getElementById('combo-value'),
         resultModal: document.getElementById('result-modal'),
-        achievementsModal: document.getElementById('achievements-modal'),
+        // achievementsModal r emoved (now a screen)
         achievementsList: document.getElementById('achievements-list'),
         newAchievements: document.getElementById('new-achievements'),
         starsDisplay: document.getElementById('stars-display'),
         finalScore: document.getElementById('final-score'),
         earnedXp: document.getElementById('earned-xp'),
-        totalStars: document.getElementById('total-stars-display')
+        totalStars: document.getElementById('total-stars-display'),
+        currentLevel: document.getElementById('current-level')
     };
 
     // Game Configuration
@@ -267,10 +269,10 @@
         if (playerData.tutorialsSeen[type] !== true) {
             let message = "";
             let title = "";
-            if (type === 'lightning') { title = "⚡ Yıldırım"; message = "Seçtiğin kristalin <strong>TÜM katlarını</strong> otomatik toplar.<br><br>Kombo yapmadan hızlıca puan toplamak için idealdir."; }
+            if (type === 'lightning') { title = "⚡ Yıldırım"; message = "Seçtiğin kristalin <strong>TÜM katlarını</strong> otomatik olarak yok eder.<br><br>Kombo yapmadan hızlıca puan toplamak için idealdir."; }
             if (type === 'magnifier') { title = "🔍 Büyüteç"; message = "Bulman gereken sıradaki <strong>en küçük asalı</strong> yeşil çerçeve ile gösterir."; }
             if (type === 'time') { title = "⏰ Zaman"; message = "Süreye anında <strong>+30 saniye</strong> ekler."; }
-            if (type === 'dynamite') { title = "💣 Dinamit"; message = "Hata yapmanı önlemek için <strong>5 rastgele taşı</strong> patlatır.<br><br>Asla kristallere zarar vermez."; }
+            if (type === 'dynamite') { title = "💣 Dinamit"; message = "Hata yapmanı önlemek için <strong>5 rastgele değersiz taşı</strong> patlatır.<br><br>Asla kristallere (Asal sayılara) zarar vermez."; }
 
             // Show Custom Modal
             confirmModal.show(title, message, () => {
@@ -451,7 +453,7 @@
         });
 
         document.getElementById('achievements-btn').addEventListener('click', () => {
-            ui.achievementsModal.classList.add('active');
+            showScreen('achievements');
         });
 
         // Settings Listeners
@@ -521,8 +523,26 @@
         });
 
         document.getElementById('close-achievements').addEventListener('click', () => {
-            ui.achievementsModal.classList.remove('active');
+            showScreen('start');
         });
+
+
+        // Store Button Logic - Opens Info Modal
+        const storeBtn = document.getElementById('store-btn');
+        const infoModal = document.getElementById('info-modal');
+        const infoModalOk = document.getElementById('info-modal-ok');
+
+        if (storeBtn && infoModal) {
+            storeBtn.addEventListener('click', () => {
+                infoModal.classList.add('active');
+            });
+        }
+
+        if (infoModalOk && infoModal) {
+            infoModalOk.addEventListener('click', () => {
+                infoModal.classList.remove('active');
+            });
+        }
         document.getElementById('next-level-btn').addEventListener('click', () => {
             ui.resultModal.classList.remove('active');
             ui.newAchievements.innerHTML = '';
@@ -652,6 +672,7 @@
         updateUI();
         updatePowerUpUI(); // Refresh state
         ui.mission.textContent = 'Bir değerli kristal seç';
+        ui.currentLevel.textContent = `Seviye ${levelId}`;
         ui.combo.classList.remove('active');
     }
 
@@ -660,6 +681,14 @@
         gameState.primes = primes.filter(p => p > 1);
 
         ui.grid.innerHTML = '';
+
+        // Auto-adjust grid density for large numbers
+        if (gameState.maxNumber > 50) {
+            ui.grid.classList.add('dense');
+        } else {
+            ui.grid.classList.remove('dense');
+        }
+
         for (let i = 1; i <= gameState.maxNumber; i++) {
             const tile = document.createElement('div');
             tile.className = 'tile';
