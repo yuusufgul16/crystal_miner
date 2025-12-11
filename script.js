@@ -33,11 +33,8 @@
 
     // Game Configuration
     const LEVELS = [
-        { id: 1, max: 20, time: 90, xp: 50 },
-        { id: 2, max: 30, time: 120, xp: 75 },
-        { id: 3, max: 50, time: 150, xp: 100 },
-        { id: 4, max: 75, time: 180, xp: 150 },
-        { id: 5, max: 100, time: 210, xp: 200 }
+        { id: 1, max: 50, time: 180, xp: 100 },
+        { id: 2, max: 100, time: 300, xp: 200 }
     ];
 
     const ACHIEVEMENTS = {
@@ -315,7 +312,7 @@
         // Auto-collect all multiples
         let collected = 0;
         for (let i = gameState.activePrime * 2; i <= gameState.maxNumber; i += gameState.activePrime) {
-            const data = gameState.grid[i - 2];
+            const data = gameState.grid[i - 1];
             if (data.state !== 'eliminated') {
                 const tile = getTile(i);
                 data.state = 'eliminated';
@@ -645,7 +642,7 @@
         gameState.primes = primes.filter(p => p > 1);
 
         ui.grid.innerHTML = '';
-        for (let i = 2; i <= gameState.maxNumber; i++) {
+        for (let i = 1; i <= gameState.maxNumber; i++) {
             const tile = document.createElement('div');
             tile.className = 'tile';
             tile.textContent = i;
@@ -671,7 +668,7 @@
 
     function handleTileClick(num) {
         const tile = getTile(num);
-        const data = gameState.grid[num - 2];
+        const data = gameState.grid[num - 1];
 
         if (data.state === 'eliminated' || data.state === 'completed') return;
 
@@ -686,7 +683,7 @@
                 // Check if no multiples
                 let hasMultiples = false;
                 for (let i = num * 2; i <= gameState.maxNumber; i += num) {
-                    if (gameState.grid[i - 2].state !== 'eliminated') {
+                    if (gameState.grid[i - 1].state !== 'eliminated') {
                         hasMultiples = true;
                         break;
                     }
@@ -758,7 +755,7 @@
 
         let remains = false;
         for (let i = gameState.activePrime * 2; i <= gameState.maxNumber; i += gameState.activePrime) {
-            if (gameState.grid[i - 2].state !== 'eliminated') {
+            if (gameState.grid[i - 1].state !== 'eliminated') {
                 remains = true;
                 break;
             }
@@ -773,7 +770,7 @@
         // Mark current active prime as completed
         if (gameState.activePrime) {
             const primeVal = gameState.activePrime;
-            const data = gameState.grid[primeVal - 2];
+            const data = gameState.grid[primeVal - 1];
             data.state = 'completed';
             const tile = getTile(primeVal);
             if (tile) tile.classList.add('completed');
