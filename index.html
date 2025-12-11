@@ -45,50 +45,64 @@
 
         <!-- Game Screen -->
         <section id="game-screen" class="screen">
-            <div id="game-header">
-                <div class="header-left" style="display: flex; align-items: center; gap: 10px;">
-                    <div id="score-container" class="stat-pill">💎 <span id="score">0</span></div>
-                    <div class="combo-indicator" id="combo">
-                        🔥 <span id="combo-value">0</span>x
+            <!-- Top Panel: Stats, Info, Powerups all in one row -->
+            <div class="game-top-panel">
+                <div class="panel-section stats-section">
+                    <div class="sidebar-header">
+                        <button id="ingame-settings-btn" class="icon-btn" title="Ayarlar">⚙️</button>
+                        <div id="timer" class="timer">00:00</div>
+                    </div>
+                    <div class="stats-card">
+                        <div class="stat-row">
+                            <div id="score-container" class="stat-pill">💎 <span id="score">0</span></div>
+                            <div class="combo-indicator" id="combo">🔥 <span id="combo-value">0</span>x</div>
+                        </div>
                     </div>
                 </div>
 
-                <div id="timer" class="timer">00:00</div>
+                <div class="panel-section mission-section">
+                    <div class="mission-card">
+                        <div class="card-title">GÖREV</div>
+                        <div class="mission" id="mission">
+                            <span class="icon">⛏️</span>
+                            <span class="text">Bir değerli kristal seç</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress"></div>
+                            <span class="progress-text" id="progress-text">0/0</span>
+                        </div>
+                    </div>
+                </div>
 
-                <button id="ingame-settings-btn" class="icon-btn" title="Ayarlar">⚙️</button>
+                <div class="panel-section powerups-section">
+                    <div class="powerups-card">
+                        <div class="card-title">GÜÇLENDİRİCİLER</div>
+                        <div class="powerups-grid">
+                            <button id="powerup-lightning" class="powerup-btn" title="Yıldırım">
+                                <span class="powerup-icon">⚡</span>
+                                <span class="powerup-count" id="count-lightning">0</span>
+                            </button>
+                            <button id="powerup-magnifier" class="powerup-btn" title="Büyüteç">
+                                <span class="powerup-icon">🔍</span>
+                                <span class="powerup-count" id="count-magnifier">0</span>
+                            </button>
+                            <button id="powerup-time" class="powerup-btn" title="Zaman">
+                                <span class="powerup-icon">⏰</span>
+                                <span class="powerup-count" id="count-time">0</span>
+                            </button>
+                            <button id="powerup-dynamite" class="powerup-btn" title="Dinamit">
+                                <span class="powerup-icon">💣</span>
+                                <span class="powerup-count" id="count-dynamite">0</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <div class="mission" id="mission">
-                <span class="icon">⛏️</span>
-                <span class="text">Bir değerli kristal seç</span>
+            <!-- Game Board: The Grid -->
+            <div class="game-board">
+                <div class="grid-container" id="grid"></div>
             </div>
-
-            <div class="progress-bar">
-                <div class="progress-fill" id="progress"></div>
-                <span class="progress-text" id="progress-text">0/0</span>
-            </div>
-
-            <!-- Power-ups Bar -->
-            <div class="powerups-bar">
-                <button id="powerup-lightning" class="powerup-btn" title="Yıldırım: Tüm katları topla">
-                    <span class="powerup-icon">⚡</span>
-                    <span class="powerup-count" id="count-lightning">0</span>
-                </button>
-                <button id="powerup-magnifier" class="powerup-btn" title="Büyüteç: Asal göster">
-                    <span class="powerup-icon">🔍</span>
-                    <span class="powerup-count" id="count-magnifier">0</span>
-                </button>
-                <button id="powerup-time" class="powerup-btn" title="Zaman: +30 saniye">
-                    <span class="powerup-icon">⏰</span>
-                    <span class="powerup-count" id="count-time">0</span>
-                </button>
-                <button id="powerup-dynamite" class="powerup-btn" title="Dinamit: 5 taş patlat">
-                    <span class="powerup-icon">💣</span>
-                    <span class="powerup-count" id="count-dynamite">0</span>
-                </button>
-            </div>
-
-            <div class="grid-container" id="grid"></div>
         </section>
     </div>
 
