@@ -509,11 +509,11 @@
 
         // Sound toggle
         const soundBtn = document.getElementById('toggle-sound-btn');
-        soundBtn.textContent = muted ? "Ses: KAPALI 🔇" : "Ses: AÇIK 🔊";
+        soundBtn.checked = !muted;
         soundBtn.addEventListener('click', () => {
             muted = !muted;
             localStorage.setItem('cm_muted', muted);
-            soundBtn.textContent = muted ? "Ses: KAPALI 🔇" : "Ses: AÇIK 🔊";
+            soundBtn.checked = !muted;
             if (!muted) {
                 if (audioCtx.state === 'suspended') audioCtx.resume();
                 sounds.select();
