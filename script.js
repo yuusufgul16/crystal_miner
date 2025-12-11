@@ -5,40 +5,9 @@
     // DOM Elements
     const screens = {
         start: document.getElementById('start-screen'),
-        studentStart: document.getElementById('student-start-screen'),
-        teacherStart: document.getElementById('teacher-start-screen'),
-        mode: document.getElementById('mode-screen'),
         levels: document.getElementById('level-screen'),
         game: document.getElementById('game-screen')
     };
-
-    // ===== GAME MODE MANAGEMENT =====
-    // 'student' = uses localStorage (persistent)
-    // 'teacher' = uses sessionStorage (temp, clears on browser close)
-    let gameMode = sessionStorage.getItem('cm_game_mode') || 'student'; // Default to student
-
-    // Get appropriate storage based on current mode
-    function getStorage() {
-        return gameMode === 'teacher' ? sessionStorage : localStorage;
-    }
-
-    // Set game mode and update storage
-    function setGameMode(mode) {
-        gameMode = mode;
-        sessionStorage.setItem('cm_game_mode', mode);
-
-        // If switching to teacher mode, ensure we're using clean sessionStorage
-        if (mode === 'teacher') {
-            // Clear previous teacher data if any
-            const keysToKeep = ['cm_game_mode'];
-            Object.keys(sessionStorage).forEach(key => {
-                if (key.startsWith('cm_') && !keysToKeep.includes(key)) {
-                    sessionStorage.removeItem(key);
-                }
-            });
-        }
-    }
-
 
     const ui = {
         playerLevel: document.getElementById('player-level'),
@@ -59,13 +28,14 @@
         newAchievements: document.getElementById('new-achievements'),
         starsDisplay: document.getElementById('stars-display'),
         finalScore: document.getElementById('final-score'),
-        earnedXp: document.getElementById('earned-xp')
+        earnedXp: document.getElementById('earned-xp'),
+        totalStars: document.getElementById('total-stars-display')
     };
 
     // Game Configuration
     const LEVELS = [
-        { id: 1, max: 50, time: 5, xp: 100 },
-        { id: 2, max: 100, time: 5, xp: 200 }
+        { id: 1, max: 50, time: 180, xp: 100 },
+        { id: 2, max: 100, time: 300, xp: 200 }
     ];
 
     const ACHIEVEMENTS = {
@@ -95,20 +65,20 @@
 
     // Player Data (persistent)
     let playerData = {
-        level: parseInt(getStorage().getItem('cm_player_level') || '1'),
-        xp: parseInt(getStorage().getItem('cm_xp') || '0'),
-        stars: JSON.parse(getStorage().getItem('cm_stars') || '{}'),
-        achievements: JSON.parse(getStorage().getItem('cm_achievements') || '{}'),
+        level: parseInt(localStorage.getItem('cm_player_level') || '1'),
+        xp: parseInt(localStorage.getItem('cm_xp') || '0'),
+        stars: JSON.parse(localStorage.getItem('cm_stars') || '{}'),
+        achievements: JSON.parse(localStorage.getItem('cm_achievements') || '{}'),
         // Force default structure if missing or empty
         powerups: (() => {
-            const saved = JSON.parse(getStorage().getItem('cm_powerups') || 'null');
+            const saved = JSON.parse(localStorage.getItem('cm_powerups') || 'null');
             // Check if saved is valid object and not empty
             if (!saved || typeof saved !== 'object' || Object.keys(saved).length === 0) {
                 return { lightning: 1, magnifier: 1, time: 1, dynamite: 1 };
             }
             return saved;
         })(),
-        tutorialsSeen: JSON.parse(getStorage().getItem('cm_tutorials_seen') || '{}')
+        tutorialsSeen: JSON.parse(localStorage.getItem('cm_tutorials_seen') || '{}')
     };
 
     // Ensure tutorialsSeen is an object (security check)
@@ -127,11 +97,11 @@
             playerData.powerups[type] = 1;
         }
     });
-    getStorage().setItem('cm_powerups', JSON.stringify(playerData.powerups));
+    localStorage.setItem('cm_powerups', JSON.stringify(playerData.powerups));
 
     // Audio Context
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    let muted = getStorage().getItem('cm_muted') === 'true';
+    let muted = localStorage.getItem('cm_muted') === 'true';
 
     // Sound Functions (Procedural)
     function playTone(freq, type, duration) {
@@ -306,7 +276,7 @@
             confirmModal.show(title, message, () => {
                 // User Confirmed
                 playerData.tutorialsSeen[type] = true;
-                getStorage().setItem('cm_tutorials_seen', JSON.stringify(playerData.tutorialsSeen));
+                localStorage.setItem('cm_tutorials_seen', JSON.stringify(playerData.tutorialsSeen));
                 // Call again to execute
                 usePowerUp(type);
             });
@@ -322,7 +292,7 @@
 
         if (success) {
             playerData.powerups[type]--;
-            getStorage().setItem('cm_powerups', JSON.stringify(playerData.powerups));
+            localStorage.setItem('cm_powerups', JSON.stringify(playerData.powerups));
             updatePowerUpUI();
             sounds.powerup();
         } else {
@@ -447,294 +417,30 @@
 
     function grantPowerUp(type, amount = 1) {
         playerData.powerups[type] = (playerData.powerups[type] || 0) + amount;
-        getStorage().setItem('cm_powerups', JSON.stringify(playerData.powerups));
+        localStorage.setItem('cm_powerups', JSON.stringify(playerData.powerups));
 
         // Notify user (toast) - simple alert for now
         const name = type === 'lightning' ? '⚡ Yıldırım' : (type === 'magnifier' ? '🔍 Büyüteç' : (type === 'time' ? '⏰ Zaman' : '💣 Dinamit'));
         // alert(`🎁 Kazandın: ${name} (+${amount})`); // Removed alert for better UX later
     }
 
-    // ===== TEACHER MODE SCOREBOARD =====
-    function getTeacherScores() {
-        const scores = sessionStorage.getItem('cm_teacher_scores');
-        return scores ? JSON.parse(scores) : [];
-    }
-
-    function addTeacherScore(studentName, score, level, timeElapsed) {
-        const scores = getTeacherScores();
-        const newScore = {
-            studentName: studentName || 'Öğrenci',
-            score: score,
-            level: level,
-            timeElapsed: timeElapsed,
-            timestamp: new Date().toLocaleString('tr-TR')
-        };
-        scores.push(newScore);
-        // Sort by score descending
-        scores.sort((a, b) => b.score - a.score);
-        sessionStorage.setItem('cm_teacher_scores', JSON.stringify(scores));
-    }
-
-    function displayTeacherScoreboard() {
-        const modal = document.getElementById('teacher-scoreboard-modal');
-        const tbody = document.getElementById('teacher-scoreboard-body');
-        const totalGames = document.getElementById('teacher-total-games');
-
-        const scores = getTeacherScores();
-        totalGames.textContent = scores.length;
-
-        if (scores.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="6" class="text-center py-12 text-gray-500">
-                        <span class="material-symbols-outlined text-5xl mb-3 opacity-30">sports_score</span>
-                        <p>Henüz oyun oynanan kayıt yok</p>
-                    </td>
-                </tr>
-            `;
-        } else {
-            tbody.innerHTML = scores.map((s, index) => `
-                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
-                    <td class="py-3 pr-4 font-bold ${index < 3 ? 'text-yellow-400' : 'text-gray-400'}">${index + 1}</td>
-                    <td class="py-3 pr-4 text-white font-medium">${s.studentName}</td>
-                    <td class="py-3 pr-4">
-                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/20 text-primary font-bold text-xs">
-                            <span class="material-symbols-outlined text-xs">diamond</span>
-                            ${s.score}
-                        </span>
-                    </td>
-                    <td class="py-3 pr-4 text-gray-300">Seviye ${s.level}</td>
-                    <td class="py-3 pr-4 text-gray-400">${formatTime(s.timeElapsed)}</td>
-                    <td class="py-3 text-gray-500 text-xs">${s.timestamp}</td>
-                </tr>
-            `).join('');
-        }
-
-        modal.classList.add('active');
-    }
-
-    function clearTeacherScores() {
-        if (confirm('Tüm skor tablosunu silmek istediğinize emin misiniz?')) {
-            sessionStorage.removeItem('cm_teacher_scores');
-            displayTeacherScoreboard(); // Refresh display
-        }
-    }
-
-    function formatTime(seconds) {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${mins}:${secs.toString().padStart(2, '0')}`;
-    }
-
-    // ===== TEACHER MODE: STUDENT QUEUE MANAGEMENT =====
-    function getStudentQueue() {
-        const queue = sessionStorage.getItem('cm_student_queue');
-        return queue ? JSON.parse(queue) : [];
-    }
-
-    function saveStudentQueue(queue) {
-        sessionStorage.setItem('cm_student_queue', JSON.stringify(queue));
-        updateStudentQueueUI();
-    }
-
-    function addStudent(name) {
-        if (!name || name.trim() === '') return false;
-        const queue = getStudentQueue();
-        queue.push({
-            name: name.trim(),
-            id: Date.now(),
-            hasPlayed: false
-        });
-        saveStudentQueue(queue);
-        return true;
-    }
-
-    function removeStudent(id) {
-        const queue = getStudentQueue().filter(s => s.id !== id);
-        saveStudentQueue(queue);
-    }
-
-    function getCurrentStudent() {
-        const queue = getStudentQueue();
-        return queue.find(s => !s.hasPlayed) || null;
-    }
-
-    function markStudentAsPlayed() {
-        const queue = getStudentQueue();
-        const current = queue.find(s => !s.hasPlayed);
-        if (current) {
-            current.hasPlayed = true;
-            saveStudentQueue(queue);
-        }
-    }
-
-    function updateStudentQueueUI() {
-        const queue = getStudentQueue();
-        const studentList = document.getElementById('student-list');
-        const emptyList = document.getElementById('empty-student-list');
-        const studentCount = document.getElementById('student-count');
-        const currentPlayerInfo = document.getElementById('current-player-info');
-        const currentPlayerName = document.getElementById('current-player-name');
-
-        // Update count
-        studentCount.textContent = `${queue.length} öğrenci`;
-
-        // Show/hide empty state
-        if (queue.length === 0) {
-            emptyList?.classList.remove('hidden');
-            if (currentPlayerInfo) currentPlayerInfo.classList.add('hidden');
-        } else {
-            emptyList?.classList.add('hidden');
-        }
-
-        // Render student list
-        if (queue.length > 0 && studentList) {
-            const listHTML = queue.map(student => `
-                <div class="flex items-center justify-between p-3 rounded-lg ${student.hasPlayed ? 'bg-white/5' : 'bg-primary/10 border border-primary/30'} transition-all">
-                    <div class="flex items-center gap-3">
-                        ${student.hasPlayed
-                    ? '<span class="material-symbols-outlined text-green-400 text-xl">check_circle</span>'
-                    : '<span class="material-symbols-outlined text-primary text-xl">person</span>'}
-                        <span class="text-white font-medium ${student.hasPlayed ? 'line-through opacity-50' : ''}">${student.name}</span>
-                    </div>
-                    <button onclick="removeStudent(${student.id})" class="p-1 hover:bg-red-500/20 rounded transition-colors">
-                        <span class="material-symbols-outlined text-red-400 text-sm">close</span>
-                    </button>
-                </div>
-            `).join('');
-
-            // Remove empty state child if exists and add students
-            const emptyChild = studentList.querySelector('#empty-student-list');
-            if (emptyChild) emptyChild.remove();
-
-            studentList.innerHTML = listHTML;
-        }
-
-        // Update current player info
-        const currentStudent = getCurrentStudent();
-        if (currentStudent && currentPlayerInfo && currentPlayerName) {
-            currentPlayerInfo.classList.remove('hidden');
-            currentPlayerName.textContent = currentStudent.name;
-        } else if (currentPlayerInfo) {
-            currentPlayerInfo.classList.add('hidden');
-        }
-    }
-
-    function showTeacherStudentPanel(show) {
-        const panel = document.getElementById('teacher-student-panel');
-        if (panel) {
-            if (show && gameMode === 'teacher') {
-                panel.classList.remove('hidden');
-                updateStudentQueueUI();
-            } else {
-                panel.classList.add('hidden');
-            }
-        }
-    }
-
-    // ===== TEACHER START SCREEN MANAGEMENT =====
-    function updateTeacherStartScreen() {
-        const queue = getStudentQueue();
-        const scores = getTeacherScores();
-
-        // Update stats
-        document.getElementById('teacher-total-students').textContent = queue.length;
-        document.getElementById('teacher-total-games-home').textContent = scores.length;
-
-        // Calculate average score
-        const avgScore = scores.length > 0
-            ? Math.round(scores.reduce((sum, s) => sum + s.score, 0) / scores.length)
-            : 0;
-        document.getElementById('teacher-average-score').textContent = avgScore;
-
-        // Update recent scores (show last 5)
-        const recentScoresDiv = document.getElementById('teacher-recent-scores');
-        if (scores.length > 0) {
-            const recent = scores.slice(0, 5);
-            recentScoresDiv.innerHTML = recent.map(s => `
-                <div class="flex items-center justify-between p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-all">
-                    <div class="flex items-center gap-3">
-                        <span class="material-symbols-outlined text-primary text-xl">person</span>
-                        <span class="text-white font-medium">${s.studentName}</span>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <span class="text-gray-400 text-sm">Seviye ${s.level}</span>
-                        <span class="text-primary font-bold">${s.score}</span>
-                    </div>
-                </div>
-            `).join('');
-        } else {
-            recentScoresDiv.innerHTML = `
-                <div class="text-center py-8 text-gray-500 text-sm">
-                    <span class="material-symbols-outlined text-3xl mb-2 opacity-30">inbox</span>
-                    <p>Henüz oyun oynanan kayıt yok</p>
-                </div>
-            `;
-        }
-    }
-
-
     // Initialize
     function init() {
         // Emergency refill if all powerups are 0 (Fix for user issue)
         if (playerData.powerups && Object.values(playerData.powerups).every(v => v === 0)) {
             playerData.powerups = { lightning: 1, magnifier: 1, time: 1, dynamite: 1 };
-            getStorage().setItem('cm_powerups', JSON.stringify(playerData.powerups));
+            localStorage.setItem('cm_powerups', JSON.stringify(playerData.powerups));
         }
 
         updatePlayerUI();
         updatePowerUpUI(); // Init powerups
         renderLevels();
         renderAchievements();
+        updateTotalStars();
 
         // Event Listeners
-        // Show mode selection screen instead of directly going to levels
-        document.getElementById('start-btn').addEventListener('click', () => showScreen('mode'));
+        document.getElementById('start-btn').addEventListener('click', () => showScreen('levels'));
         document.getElementById('back-btn').addEventListener('click', () => showScreen('start'));
-
-        // Mode Selection Listeners
-        document.getElementById('student-mode-btn').addEventListener('click', () => {
-            setGameMode('student');
-            showScreen('studentStart'); // Show student start screen
-        });
-
-        document.getElementById('teacher-mode-btn').addEventListener('click', () => {
-            setGameMode('teacher');
-            updateTeacherStartScreen(); // Update stats before showing
-            showScreen('teacherStart'); // Show teacher start screen
-        });
-
-        document.getElementById('mode-back-btn').addEventListener('click', () => showScreen('start'));
-
-        // Teacher Scoreboard Listeners
-        const teacherScoreboardModal = document.getElementById('teacher-scoreboard-modal');
-        document.getElementById('close-teacher-scoreboard')?.addEventListener('click', () => {
-            teacherScoreboardModal.classList.remove('active');
-        });
-        document.getElementById('teacher-clear-scores')?.addEventListener('click', clearTeacherScores);
-
-        // Teacher Student Queue Listeners
-        const addStudentBtn = document.getElementById('add-student-btn');
-        const studentNameInput = document.getElementById('student-name-input');
-
-        addStudentBtn?.addEventListener('click', () => {
-            const name = studentNameInput.value;
-            if (addStudent(name)) {
-                studentNameInput.value = ''; // Clear input
-                updateStudentQueueUI();
-            }
-        });
-
-        // Allow Enter key to add student
-        studentNameInput?.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                const name = studentNameInput.value;
-                if (addStudent(name)) {
-                    studentNameInput.value = '';
-                    updateStudentQueueUI();
-                }
-            }
-        });
 
         // Power-up Listeners
         Object.keys(powerUpBtns).forEach(type => {
@@ -747,23 +453,6 @@
         document.getElementById('achievements-btn').addEventListener('click', () => {
             ui.achievementsModal.classList.add('active');
         });
-
-        // Teacher Start Screen Listeners
-        document.getElementById('teacher-start-game-btn')?.addEventListener('click', () => {
-            showScreen('levels'); // Go to level selection
-        });
-
-        document.getElementById('teacher-view-scoreboard-btn')?.addEventListener('click', displayTeacherScoreboard);
-        document.getElementById('teacher-view-all-scores')?.addEventListener('click', displayTeacherScoreboard);
-
-        document.getElementById('teacher-settings-btn')?.addEventListener('click', () => {
-            document.getElementById('settings-modal').classList.add('active');
-        });
-
-        document.getElementById('teacher-change-mode-btn')?.addEventListener('click', () => {
-            showScreen('mode'); // Go back to mode selection
-        });
-
 
         // Settings Listeners
         // Settings Listeners
@@ -802,21 +491,6 @@
             }
         });
 
-        // Student Start Screen Listeners
-        document.getElementById('student-play-btn')?.addEventListener('click', () => {
-            showScreen('levels');
-        });
-
-        document.getElementById('student-achievements-btn')?.addEventListener('click', () => {
-            ui.achievementsModal.classList.add('active');
-        });
-
-        document.getElementById('student-settings-btn')?.addEventListener('click', () => {
-            if (ingameControls) ingameControls.style.display = 'none';
-            settingsModal.classList.add('active');
-        });
-
-
         // In-Game Menu Buttons
         const restartBtn = document.getElementById('restart-level-btn');
         if (restartBtn) {
@@ -840,7 +514,7 @@
         // Toggle switch olarak değiştirildi, textContent kullanılmıyor
         soundBtn.addEventListener('change', () => {
             muted = !soundBtn.checked;
-            getStorage().setItem('cm_muted', muted);
+            localStorage.setItem('cm_muted', muted);
             if (!muted) {
                 if (audioCtx.state === 'suspended') audioCtx.resume();
             }
@@ -852,14 +526,8 @@
         document.getElementById('next-level-btn').addEventListener('click', () => {
             ui.resultModal.classList.remove('active');
             ui.newAchievements.innerHTML = '';
-
-            // Teacher mode: show scoreboard instead of next level
-            if (gameMode === 'teacher') {
-                displayTeacherScoreboard();
-            } else {
-                const nextLevel = Math.min(gameState.currentLevel + 1, LEVELS.length);
-                startGame(nextLevel);
-            }
+            const nextLevel = Math.min(gameState.currentLevel + 1, LEVELS.length);
+            startGame(nextLevel);
         });
         document.getElementById('restart-btn').addEventListener('click', () => {
             ui.resultModal.classList.remove('active');
@@ -876,11 +544,6 @@
     function showScreen(name) {
         Object.values(screens).forEach(s => s.classList.remove('active'));
         screens[name].classList.add('active');
-
-        // Show/hide teacher student panel on level screen
-        if (name === 'levels') {
-            showTeacherStudentPanel(gameMode === 'teacher');
-        }
     }
 
     function updatePlayerUI() {
@@ -889,15 +552,6 @@
         const xpPercent = (playerData.xp / xpNeeded) * 100;
         ui.xpBar.style.width = xpPercent + '%';
         ui.xpText.textContent = `${playerData.xp} / ${xpNeeded} XP`;
-
-        // Also update student start screen if elements exist
-        const studentLevel = document.getElementById('player-level-student');
-        const studentXpBar = document.getElementById('xp-bar-student');
-        const studentXpText = document.getElementById('xp-text-student');
-
-        if (studentLevel) studentLevel.textContent = playerData.level;
-        if (studentXpBar) studentXpBar.style.width = xpPercent + '%';
-        if (studentXpText) studentXpText.textContent = `${playerData.xp} / ${xpNeeded} XP`;
     }
 
     function addXP(amount) {
@@ -911,8 +565,8 @@
             createParticles(window.innerWidth / 2, 100, 'star', 50);
         }
 
-        getStorage().setItem('cm_xp', playerData.xp);
-        getStorage().setItem('cm_player_level', playerData.level);
+        localStorage.setItem('cm_xp', playerData.xp);
+        localStorage.setItem('cm_player_level', playerData.level);
         updatePlayerUI();
     }
 
@@ -924,16 +578,28 @@
             const stars = playerData.stars[level.id] || 0;
 
             // Check if level is locked (previous level not completed)
-            const isLocked = index > 0 && (playerData.stars[index] || 0) === 0;
+            const isLocked = index > 0 && (playerData.stars[LEVELS[index - 1].id] || 0) === 0;
 
             if (isLocked) {
                 btn.classList.add('locked');
             }
 
+            // Create Star HTML using Material Symbols logic or simple text
+            // Using text is safer for now, but we can style it
+            let starsHtml = '';
+            if (isLocked) {
+                // Lock icon is handled by CSS ::after
+                starsHtml = '';
+            } else {
+                for (let i = 0; i < 3; i++) {
+                    starsHtml += `<span class="material-symbols-outlined text-[20px] ${i < stars ? 'text-yellow-400 fill-1' : 'text-gray-600'}">star</span>`;
+                }
+            }
+
             btn.innerHTML = `
                 <div class="level-number">${level.id}</div>
                 <div class="level-range">1-${level.max}</div>
-                <div class="stars">${isLocked ? '🔒' : '⭐'.repeat(stars) + '☆'.repeat(3 - stars)}</div>
+                <div class="stars">${starsHtml}</div>
             `;
 
             if (!isLocked) {
@@ -942,6 +608,12 @@
 
             ui.levelGrid.appendChild(btn);
         });
+    }
+
+    function updateTotalStars() {
+        if (!ui.totalStars) return;
+        const total = Object.values(playerData.stars).reduce((a, b) => a + b, 0);
+        ui.totalStars.textContent = total;
     }
 
     function renderAchievements() {
@@ -1128,6 +800,7 @@
 
         if (remainingPrimes === 0) {
             endGame(true);
+            updateTotalStars();
         } else {
             ui.mission.textContent = 'Bir değerli kristal seç';
         }
@@ -1212,7 +885,7 @@
         const prevStars = playerData.stars[gameState.currentLevel] || 0;
         if (stars > prevStars) {
             playerData.stars[gameState.currentLevel] = stars;
-            getStorage().setItem('cm_stars', JSON.stringify(playerData.stars));
+            localStorage.setItem('cm_stars', JSON.stringify(playerData.stars));
         }
 
         const xpGained = success ? level.xp + (stars * 20) : Math.floor(level.xp / 2);
@@ -1239,17 +912,6 @@
         ui.finalScore.textContent = gameState.score;
         ui.earnedXp.textContent = xpGained;
 
-        // Teacher Mode: Add score to scoreboard using student queue
-        if (gameMode === 'teacher') {
-            const currentStudent = getCurrentStudent();
-            if (currentStudent) {
-                const timeElapsed = level.time - gameState.timeLeft;
-                addTeacherScore(currentStudent.name, gameState.score, gameState.currentLevel, timeElapsed);
-                markStudentAsPlayed(); // Mark this student as having played
-                updateStudentQueueUI(); // Update UI to show next student
-            }
-        }
-
         sounds.complete();
         createParticles(window.innerWidth / 2, window.innerHeight / 2, 'star', 100);
 
@@ -1261,7 +923,7 @@
         if (ACHIEVEMENTS[key] && !ACHIEVEMENTS[key].unlocked) {
             ACHIEVEMENTS[key].unlocked = true;
             playerData.achievements[key] = true;
-            getStorage().setItem('cm_achievements', JSON.stringify(playerData.achievements));
+            localStorage.setItem('cm_achievements', JSON.stringify(playerData.achievements));
 
             const div = document.createElement('div');
             div.className = 'achievement-item';
@@ -1281,7 +943,4 @@
 
     // Initialize game
     init();
-
-    // Expose removeStudent globally for inline onclick handlers
-    window.removeStudent = removeStudent;
 })();
