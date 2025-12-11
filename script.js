@@ -34,8 +34,8 @@
 
     // Game Configuration
     const LEVELS = [
-        { id: 1, max: 50, time: 180, xp: 100 },
-        { id: 2, max: 100, time: 300, xp: 200 }
+        { id: 1, max: 50, time: 180, xp: 100, label: "6. Sınıf" },
+        { id: 2, max: 100, time: 300, xp: 200, label: "8. Sınıf" }
     ];
 
     const ACHIEVEMENTS = {
@@ -577,8 +577,8 @@
             btn.className = 'level-btn';
             const stars = playerData.stars[level.id] || 0;
 
-            // Check if level is locked (previous level not completed)
-            const isLocked = index > 0 && (playerData.stars[LEVELS[index - 1].id] || 0) === 0;
+            // Unlock all levels as requested
+            const isLocked = false;
 
             if (isLocked) {
                 btn.classList.add('locked');
@@ -598,7 +598,7 @@
 
             btn.innerHTML = `
                 <div class="level-number">${level.id}</div>
-                <div class="level-range">1-${level.max}</div>
+                <div class="level-range" style="font-size: 0.7rem;">${level.label}<br>1-${level.max}</div>
                 <div class="stars">${starsHtml}</div>
             `;
 
