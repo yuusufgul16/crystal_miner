@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#1a1a2e">
+    <title>💎 Kristal Madencisi</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="icon.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="game-container">
+        <!-- Start Screen -->
+        <section id="start-screen" class="screen active">
+            <h1 class="game-title">💎 Kristal Madencisi</h1>
+            <p class="subtitle">Değerli kristalleri bul ve taşları ayıkla!</p>
+
+            <div class="player-info">
+                <div class="player-level">
+                    <span class="level-badge">Seviye <span id="player-level">1</span></span>
+                </div>
+                <div class="xp-bar-container">
+                    <div class="xp-bar" id="xp-bar"></div>
+                    <span class="xp-text" id="xp-text">0 / 100 XP</span>
+                </div>
+            </div>
+
+            <button id="start-btn" class="btn-primary">⛏️ KAZIYA BAŞLA</button>
+            <button id="achievements-btn" class="btn-secondary">🏆 BAŞARIMLAR</button>
+            <button id="settings-btn" class="btn-secondary" style="margin-top: 10px;">⚙️ AYARLAR & İPUÇLARI</button>
+        </section>
+
+        <!-- Level Selection -->
+        <section id="level-screen" class="screen">
+            <h2>🏔️ Maden Katmanları</h2>
+            <div class="level-grid" id="level-grid"></div>
+            <button id="back-btn" class="btn-back">⬅ GERİ</button>
+        </section>
+
+        <!-- Game Screen -->
+        <section id="game-screen" class="screen">
+            <div id="game-header">
+                <div class="header-left" style="display: flex; align-items: center; gap: 10px;">
+                    <div id="score-container" class="stat-pill">💎 <span id="score">0</span></div>
+                    <div class="combo-indicator" id="combo">
+                        🔥 <span id="combo-value">0</span>x
+                    </div>
+                </div>
+
+                <div id="timer" class="timer">00:00</div>
+
+                <button id="ingame-settings-btn" class="icon-btn" title="Ayarlar">⚙️</button>
+            </div>
+
+            <div class="mission" id="mission">
+                <span class="icon">⛏️</span>
+                <span class="text">Bir değerli kristal seç</span>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+                <span class="progress-text" id="progress-text">0/0</span>
+            </div>
+
+            <!-- Power-ups Bar -->
+            <div class="powerups-bar">
+                <button id="powerup-lightning" class="powerup-btn" title="Yıldırım: Tüm katları topla">
+                    <span class="powerup-icon">⚡</span>
+                    <span class="powerup-count" id="count-lightning">0</span>
+                </button>
+                <button id="powerup-magnifier" class="powerup-btn" title="Büyüteç: Asal göster">
+                    <span class="powerup-icon">🔍</span>
+                    <span class="powerup-count" id="count-magnifier">0</span>
+                </button>
+                <button id="powerup-time" class="powerup-btn" title="Zaman: +30 saniye">
+                    <span class="powerup-icon">⏰</span>
+                    <span class="powerup-count" id="count-time">0</span>
+                </button>
+                <button id="powerup-dynamite" class="powerup-btn" title="Dinamit: 5 taş patlat">
+                    <span class="powerup-icon">💣</span>
+                    <span class="powerup-count" id="count-dynamite">0</span>
+                </button>
+            </div>
+
+            <div class="grid-container" id="grid"></div>
+        </section>
+    </div>
+
+    <!-- Result Modal -->
+    <div id="result-modal" class="modal">
+        <div class="modal-content">
+            <h2 id="modal-title">🎉 Kazı Tamamlandı!</h2>
+
+            <div class="stars" id="stars-display"></div>
+
+            <div class="achievements-unlocked" id="new-achievements"></div>
+
+            <div class="modal-stats">
+                <p>💎 Kristal: <span id="final-score">0</span></p>
+                <p>✨ Kazanılan XP: <span id="earned-xp">0</span></p>
+            </div>
+
+            <div class="modal-buttons">
+                <button id="next-level-btn" class="btn-primary">Sonraki Katman ➡️</button>
+                <button id="restart-btn" class="btn-secondary">🔄 Tekrar Dene</button>
+                <button id="menu-btn" class="btn-back">📋 Ana Menü</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Achievements Modal -->
+    <div id="achievements-modal" class="modal">
+        <div class="modal-content">
+            <h2>🏆 Başarımlar</h2>
+            <div id="achievements-list"></div>
+            <button id="close-achievements" class="btn-primary">Kapat</button>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content" style="max-width: 450px;">
+            <h2>⚙️ Ayarlar & İpuçları</h2>
+
+            <!-- Game Guide Section -->
+            <div class="settings-section">
+                <h3>📖 Madencilik Rehberi</h3>
+                <div class="tutorial-list">
+                    <div class="tutorial-item"
+                        style="border-left: 4px solid var(--accent-gold); background: rgba(255, 215, 0, 0.1);">
+                        <span class="icon">💎</span>
+                        <div class="desc">
+                            <strong>KRİSTAL (Asal Sayı):</strong>
+                            <p style="margin: 5px 0; font-size: 0.9em; color: #ddd;">Sadece 1'e ve kendisine bölünebilen
+                                saf taşlar. (2, 3, 5, 7...)</p>
+                            <em style="color: var(--accent-gold);">HEDEF: Bunları seç!</em>
+                        </div>
+                    </div>
+                    <div class="tutorial-item"
+                        style="border-left: 4px solid #aaa; background: rgba(255, 255, 255, 0.05);">
+                        <span class="icon">⛏️</span>
+                        <div class="desc">
+                            <strong>KAYA (Katlar):</strong>
+                            <p style="margin: 5px 0; font-size: 0.9em; color: #ddd;">Seçtiğin kristalin katları olan
+                                değersiz taşlar.</p>
+                            <em style="color: #4facfe;">HEDEF: Bunları patlat!</em>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- In-Game Controls -->
+            <div id="ingame-controls" class="settings-section"
+                style="display: none; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+                <button id="restart-level-btn" class="btn-primary" style="width: 100%;">🔄 Bölümü Yeniden
+                    Başlat</button>
+                <button id="main-menu-btn" class="btn-secondary" style="width: 100%;">🏠 Ana Menüye Dön</button>
+            </div>
+
+            <div class="settings-section">
+                <h3>🔊 Ses</h3>
+                <button id="toggle-sound-btn" class="btn-secondary">Ses: AÇIK 🔊</button>
+            </div>
+
+            <div class="settings-section">
+                <h3>⚡ Güç Artırıcılar</h3>
+                <div class="tutorial-list">
+                    <div class="tutorial-item">
+                        <span class="icon">⚡</span>
+                        <div class="desc">
+                            <strong>Yıldırım:</strong> Seçtiğin kristalin tüm katlarını otomatik toplar.
+                        </div>
+                    </div>
+                    <div class="tutorial-item">
+                        <span class="icon">🔍</span>
+                        <div class="desc">
+                            <strong>Büyüteç:</strong> Bulman gereken bir sonraki en küçük kristali (asalı) gösterir.
+                        </div>
+                    </div>
+                    <div class="tutorial-item">
+                        <span class="icon">⏰</span>
+                        <div class="desc">
+                            <strong>Zaman:</strong> Süreye anında +30 saniye ekler.
+                        </div>
+                    </div>
+                    <div class="tutorial-item">
+                        <span class="icon">💣</span>
+                        <div class="desc">
+                            <strong>Dinamit:</strong> Hata yapmanı önlemek için 5 rastgele taşı patlatır.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button id="close-settings" class="btn-primary" style="margin-top: 20px;">Kapat</button>
+        </div>
+    </div>
+
+    <!-- Confirm Modal (Tutorial) -->
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content" style="max-width: 400px; z-index: 2000;">
+            <h2 id="confirm-title" style="color: var(--accent-gold); margin-bottom: 15px;">İPUCU</h2>
+            <p id="confirm-message" style="margin: 20px 0; font-size: 1.1rem; line-height: 1.5; color: #eee;"></p>
+            <div class="modal-buttons">
+                <button id="confirm-yes" class="btn-primary">Kullan ✅</button>
+                <button id="confirm-no" class="btn-secondary">İptal ❌</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Particle Canvas -->
+    <canvas id="particles"></canvas>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
