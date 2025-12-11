@@ -546,14 +546,12 @@
         // Mode Selection Listeners
         document.getElementById('student-mode-btn').addEventListener('click', () => {
             setGameMode('student');
-            // Reload player data for student mode
-            location.reload(); // Simple reload to ensure proper storage loading
+            showScreen('levels'); // Show level selection
         });
 
         document.getElementById('teacher-mode-btn').addEventListener('click', () => {
             setGameMode('teacher');
-            // Reload to ensure sessionStorage is used
-            location.reload();
+            showScreen('levels'); // Show level selection
         });
 
         document.getElementById('mode-back-btn').addEventListener('click', () => showScreen('start'));
@@ -649,8 +647,14 @@
         document.getElementById('next-level-btn').addEventListener('click', () => {
             ui.resultModal.classList.remove('active');
             ui.newAchievements.innerHTML = '';
-            const nextLevel = Math.min(gameState.currentLevel + 1, LEVELS.length);
-            startGame(nextLevel);
+
+            // Teacher mode: show scoreboard instead of next level
+            if (gameMode === 'teacher') {
+                displayTeacherScoreboard();
+            } else {
+                const nextLevel = Math.min(gameState.currentLevel + 1, LEVELS.length);
+                startGame(nextLevel);
+            }
         });
         document.getElementById('restart-btn').addEventListener('click', () => {
             ui.resultModal.classList.remove('active');
@@ -1015,6 +1019,16 @@
         ui.starsDisplay.innerHTML = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
         ui.finalScore.textContent = gameState.score;
         ui.earnedXp.textContent = xpGained;
+
+        // Teacher Mode: Add score to scoreboard
+        if (gameMode === 'teacher') {
+            // Prompt for student name
+            const studentName = prompt('Öğrenci adı girin:', 'Öğrenci ' + (getTeacherScores().length + 1));
+            if (studentName) {
+                const timeElapsed = level.time - gameState.timeLeft;
+                addTeacherScore(studentName, gameState.score, gameState.currentLevel, timeElapsed);
+            }
+        }
 
         sounds.complete();
         createParticles(window.innerWidth / 2, window.innerHeight / 2, 'star', 100);
