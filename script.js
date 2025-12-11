@@ -5,6 +5,8 @@
     // DOM Elements
     const screens = {
         start: document.getElementById('start-screen'),
+        studentStart: document.getElementById('student-start-screen'),
+        teacherStart: document.getElementById('teacher-start-screen'),
         mode: document.getElementById('mode-screen'),
         levels: document.getElementById('level-screen'),
         game: document.getElementById('game-screen')
@@ -630,6 +632,47 @@
         }
     }
 
+    // ===== TEACHER START SCREEN MANAGEMENT =====
+    function updateTeacherStartScreen() {
+        const queue = getStudentQueue();
+        const scores = getTeacherScores();
+
+        // Update stats
+        document.getElementById('teacher-total-students').textContent = queue.length;
+        document.getElementById('teacher-total-games-home').textContent = scores.length;
+
+        // Calculate average score
+        const avgScore = scores.length > 0
+            ? Math.round(scores.reduce((sum, s) => sum + s.score, 0) / scores.length)
+            : 0;
+        document.getElementById('teacher-average-score').textContent = avgScore;
+
+        // Update recent scores (show last 5)
+        const recentScoresDiv = document.getElementById('teacher-recent-scores');
+        if (scores.length > 0) {
+            const recent = scores.slice(0, 5);
+            recentScoresDiv.innerHTML = recent.map(s => `
+                <div class="flex items-center justify-between p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-all">
+                    <div class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-primary text-xl">person</span>
+                        <span class="text-white font-medium">${s.studentName}</span>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="text-gray-400 text-sm">Seviye ${s.level}</span>
+                        <span class="text-primary font-bold">${s.score}</span>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            recentScoresDiv.innerHTML = `
+                <div class="text-center py-8 text-gray-500 text-sm">
+                    <span class="material-symbols-outlined text-3xl mb-2 opacity-30">inbox</span>
+                    <p>Henüz oyun oynanan kayıt yok</p>
+                </div>
+            `;
+        }
+    }
+
 
     // Initialize
     function init() {
@@ -652,12 +695,13 @@
         // Mode Selection Listeners
         document.getElementById('student-mode-btn').addEventListener('click', () => {
             setGameMode('student');
-            showScreen('levels'); // Show level selection
+            showScreen('studentStart'); // Show student start screen
         });
 
         document.getElementById('teacher-mode-btn').addEventListener('click', () => {
             setGameMode('teacher');
-            showScreen('levels'); // Show level selection
+            updateTeacherStartScreen(); // Update stats before showing
+            showScreen('teacherStart'); // Show teacher start screen
         });
 
         document.getElementById('mode-back-btn').addEventListener('click', () => showScreen('start'));
@@ -704,6 +748,23 @@
             ui.achievementsModal.classList.add('active');
         });
 
+        // Teacher Start Screen Listeners
+        document.getElementById('teacher-start-game-btn')?.addEventListener('click', () => {
+            showScreen('levels'); // Go to level selection
+        });
+
+        document.getElementById('teacher-view-scoreboard-btn')?.addEventListener('click', displayTeacherScoreboard);
+        document.getElementById('teacher-view-all-scores')?.addEventListener('click', displayTeacherScoreboard);
+
+        document.getElementById('teacher-settings-btn')?.addEventListener('click', () => {
+            document.getElementById('settings-modal').classList.add('active');
+        });
+
+        document.getElementById('teacher-change-mode-btn')?.addEventListener('click', () => {
+            showScreen('mode'); // Go back to mode selection
+        });
+
+
         // Settings Listeners
         // Settings Listeners
         const settingsModal = document.getElementById('settings-modal');
@@ -740,6 +801,21 @@
                 startTimer();
             }
         });
+
+        // Student Start Screen Listeners
+        document.getElementById('student-play-btn')?.addEventListener('click', () => {
+            showScreen('levels');
+        });
+
+        document.getElementById('student-achievements-btn')?.addEventListener('click', () => {
+            ui.achievementsModal.classList.add('active');
+        });
+
+        document.getElementById('student-settings-btn')?.addEventListener('click', () => {
+            if (ingameControls) ingameControls.style.display = 'none';
+            settingsModal.classList.add('active');
+        });
+
 
         // In-Game Menu Buttons
         const restartBtn = document.getElementById('restart-level-btn');
@@ -813,6 +889,15 @@
         const xpPercent = (playerData.xp / xpNeeded) * 100;
         ui.xpBar.style.width = xpPercent + '%';
         ui.xpText.textContent = `${playerData.xp} / ${xpNeeded} XP`;
+
+        // Also update student start screen if elements exist
+        const studentLevel = document.getElementById('player-level-student');
+        const studentXpBar = document.getElementById('xp-bar-student');
+        const studentXpText = document.getElementById('xp-text-student');
+
+        if (studentLevel) studentLevel.textContent = playerData.level;
+        if (studentXpBar) studentXpBar.style.width = xpPercent + '%';
+        if (studentXpText) studentXpText.textContent = `${playerData.xp} / ${xpNeeded} XP`;
     }
 
     function addXP(amount) {

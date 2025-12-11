@@ -165,16 +165,93 @@
                         <span class="text-xl font-black text-orange-950 tracking-wide">KAZIYA BAŞLA</span>
                     </button>
                 </div>
+            </main>
 
-                <!-- Secondary Navigation -->
+            <!-- Footer Info -->
+            <footer class="relative z-10 w-full p-6 text-center">
+                <p class="text-xs text-white/20 font-medium tracking-widest">SÜRÜM 1.0.4 • ID: 8823-XJ</p>
+            </footer>
+        </section>
+
+        <!-- Student Start Screen (Full Featured) -->
+        <section id="student-start-screen"
+            class="screen w-full h-screen relative flex-col bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a1a2e] via-[#0f0f23] to-[#050510]">
+            <!-- Background Elements -->
+            <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                <div class="particle w-1 h-1 top-1/4 left-1/4 blur-[1px]"></div>
+                <div class="particle w-2 h-2 top-1/3 right-1/4 blur-[2px] opacity-30"></div>
+                <div class="particle w-1 h-1 top-2/3 left-1/3 blur-[1px]"></div>
+                <div class="particle w-1.5 h-1.5 bottom-1/4 right-1/3 blur-[1px] opacity-40"></div>
+                <div
+                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[100px]">
+                </div>
+            </div>
+
+            <!-- Top Navigation / User HUD -->
+            <header class="relative z-20 w-full px-6 py-6 flex justify-center">
+                <div
+                    class="flex items-center gap-4 p-2 pr-6 rounded-full bg-glass-gradient backdrop-blur-md border border-white/10 shadow-lg">
+                    <div class="w-12 h-12 rounded-full border-2 border-primary/30 bg-cover bg-center shadow-[0_0_15px_rgba(43,238,121,0.3)]"
+                        style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDXBEH7dUY-wZVcFfBIWCyEeW6F4eywN2BBr_o7Y2-0HCMHn3rirHe8z8QlzscFza9YD0XLb41R4sk_au0xG7WkVR1ZBI3p5boIIPnAEU1OCKnDXuZ3uxhJ8JP-yWf3K5TAF-xUvF11uobVhN3uf87ts6_O4YS18C659lXV8T2h1uw3BlLSU4K9taSGOEyjuRMyHpQS0YcFiN_sjNR4Z8CxI9z7JdMZk_m5eRGbj0wPj4RW3iGpYmg-x7G5q7qrYz0bPWzKVBZK_Mxo');">
+                    </div>
+                    <div class="flex flex-col gap-1 min-w-[160px]">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-bold tracking-wide text-white">SpaceMiner_99</span>
+                            <span
+                                class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary/20 text-primary border border-primary/20">LVL
+                                <span id="player-level-student">1</span></span>
+                        </div>
+                        <div class="w-full h-1.5 bg-[#0f0f23]/50 rounded-full overflow-hidden border border-white/5">
+                            <div id="xp-bar-student"
+                                class="h-full bg-primary shadow-[0_0_10px_rgba(43,238,121,0.8)] rounded-full transition-all duration-500"
+                                style="width: 0%"></div>
+                        </div>
+                        <div class="flex justify-between text-[10px] text-gray-400 font-medium">
+                            <span id="xp-text-student">0 / 100 XP</span>
+                        </div>
+                    </div>
+                    <div class="pl-4 border-l border-white/10 flex items-center gap-2">
+                        <span class="material-symbols-outlined text-yellow-400 text-[20px]">diamond</span>
+                        <span class="text-sm font-bold text-yellow-100">2,450</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content Area -->
+            <main class="relative z-10 flex-grow flex flex-col items-center justify-center p-6 gap-12">
+                <div class="flex flex-col items-center gap-2 text-center">
+                    <div class="relative">
+                        <h1
+                            class="text-6xl md:text-8xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-cyan-50 to-cyan-200 drop-shadow-2xl text-glow diamond-facet pb-2">
+                            CRYSTAL<br />MINER</h1>
+                        <span
+                            class="material-symbols-outlined absolute -top-4 -right-8 text-primary text-4xl animate-pulse">auto_awesome</span>
+                        <span
+                            class="material-symbols-outlined absolute bottom-4 -left-8 text-cyan-300 text-2xl animate-pulse">auto_awesome</span>
+                    </div>
+                    <p class="text-cyan-200/60 text-lg font-medium tracking-[0.2em] uppercase">Uzay Bulmaca Macerası</p>
+                </div>
+
+                <div class="relative group">
+                    <div
+                        class="absolute -inset-1 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full blur opacity-25 group-hover:opacity-50 transition duration-200">
+                    </div>
+                    <button id="student-play-btn"
+                        class="relative flex items-center justify-center gap-3 px-10 py-5 min-w-[280px] rounded-full bg-gold-gradient shadow-[0_4px_0_rgb(180,83,9),0_15px_20px_rgba(0,0,0,0.4)] transform active:translate-y-[2px] active:shadow-none transition-all duration-100 border-t border-yellow-200 cursor-pointer">
+                        <span
+                            class="material-symbols-outlined text-orange-900 text-[32px] font-bold">construction</span>
+                        <span class="text-xl font-black text-orange-950 tracking-wide">OYNA</span>
+                    </button>
+                </div>
+
                 <div class="flex gap-4 flex-wrap justify-center">
-                    <button id="achievements-btn"
+                    <button id="student-achievements-btn"
                         class="flex items-center gap-2 px-6 py-3 rounded-full bg-glass-gradient border border-white/10 backdrop-blur-md hover:bg-white/10 transition-colors text-white font-bold text-sm tracking-wide shadow-lg group cursor-pointer">
                         <span
                             class="material-symbols-outlined text-primary group-hover:text-white transition-colors">trophy</span>
                         BAŞARILAR
                     </button>
-                    <button id="settings-btn"
+                    <button id="student-settings-btn"
                         class="flex items-center gap-2 px-6 py-3 rounded-full bg-glass-gradient border border-white/10 backdrop-blur-md hover:bg-white/10 transition-colors text-white font-bold text-sm tracking-wide shadow-lg group cursor-pointer">
                         <span
                             class="material-symbols-outlined text-cyan-300 group-hover:text-white transition-colors">settings</span>
@@ -189,9 +266,151 @@
                 </div>
             </main>
 
-            <!-- Footer Info -->
             <footer class="relative z-10 w-full p-6 text-center">
                 <p class="text-xs text-white/20 font-medium tracking-widest">SÜRÜM 1.0.4 • ID: 8823-XJ</p>
+            </footer>
+        </section>
+
+        <!-- Teacher Mode Start Screen -->
+        <section id="teacher-start-screen"
+            class="screen w-full h-screen relative flex-col bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a1a2e] via-[#0f0f23] to-[#050510]">
+            <!-- Background Elements -->
+            <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                <div class="particle w-1 h-1 top-1/4 left-1/4 blur-[1px]"></div>
+                <div class="particle w-2 h-2 top-1/3 right-1/4 blur-[2px] opacity-30"></div>
+                <div class="particle w-1 h-1 top-2/3 left-1/3 blur-[1px]"></div>
+                <div class="particle w-1.5 h-1.5 bottom-1/4 right-1/3 blur-[1px] opacity-40"></div>
+                <div
+                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-orange-500/5 rounded-full blur-[100px]">
+                </div>
+            </div>
+
+            <!-- Top Navigation -->
+            <header class="relative z-20 w-full px-6 py-6 flex justify-center">
+                <div
+                    class="flex items-center gap-4 p-2 pr-6 rounded-full bg-glass-gradient backdrop-blur-md border border-orange-400/20 shadow-lg">
+                    <div
+                        class="w-12 h-12 rounded-full border-2 border-orange-400/30 bg-gradient-to-br from-orange-500/20 to-yellow-500/20 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-orange-400 text-2xl">workspace_premium</span>
+                    </div>
+                    <div class="flex flex-col gap-1 min-w-[160px]">
+                        <span class="text-sm font-bold tracking-wide text-white">Öğretmen Modu</span>
+                        <span class="text-[10px] text-gray-400">Oturum Aktif</span>
+                    </div>
+                    <button id="teacher-change-mode-btn"
+                        class="ml-4 px-3 py-1 text-xs font-bold text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+                        Mod Değiştir
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="relative z-10 flex-grow flex flex-col items-center justify-start p-6 gap-8 overflow-y-auto">
+                <!-- Title -->
+                <div class="flex flex-col items-center gap-2 text-center mt-8">
+                    <div class="relative">
+                        <h1
+                            class="text-5xl md:text-7xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white via-orange-50 to-orange-200 drop-shadow-2xl text-glow">
+                            ÖĞRETMEN
+                            <br />
+                            KONTROL PANELİ
+                        </h1>
+                    </div>
+                    <p class="text-orange-200/60 text-base font-medium tracking-[0.2em] uppercase">Sınıf Yönetim Sistemi
+                    </p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-4xl">
+                    <!-- Total Students -->
+                    <div class="glass-panel rounded-2xl p-6 border border-orange-400/20">
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="material-symbols-outlined text-primary text-2xl">group</span>
+                            <span class="text-xs text-gray-400 uppercase tracking-wider">Toplam Öğrenci</span>
+                        </div>
+                        <div class="text-4xl font-black text-white" id="teacher-total-students">0</div>
+                    </div>
+
+                    <!-- Total Games -->
+                    <div class="glass-panel rounded-2xl p-6 border border-cyan-400/20">
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="material-symbols-outlined text-cyan-400 text-2xl">sports_esports</span>
+                            <span class="text-xs text-gray-400 uppercase tracking-wider">Oynanan Oyun</span>
+                        </div>
+                        <div class="text-4xl font-black text-white" id="teacher-total-games-home">0</div>
+                    </div>
+
+                    <!-- Average Score -->
+                    <div class="glass-panel rounded-2xl p-6 border border-yellow-400/20">
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="material-symbols-outlined text-yellow-400 text-2xl">star</span>
+                            <span class="text-xs text-gray-400 uppercase tracking-wider">Ortalama Skor</span>
+                        </div>
+                        <div class="text-4xl font-black text-white" id="teacher-average-score">0</div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-4xl">
+                    <!-- Start Game Button -->
+                    <button id="teacher-start-game-btn"
+                        class="glass-panel rounded-2xl p-8 border border-primary/30 hover:bg-white/10 transition-all active:scale-95 cursor-pointer">
+                        <div class="flex items-center gap-4">
+                            <div class="w-16 h-16 rounded-2xl bg-primary/20 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-primary text-4xl">play_arrow</span>
+                            </div>
+                            <div class="text-left">
+                                <h3 class="text-xl font-bold text-white mb-1">Oyuna Başla</h3>
+                                <p class="text-sm text-gray-400">Yeni oyun oturumu başlat</p>
+                            </div>
+                        </div>
+                    </button>
+
+                    <!-- View Scoreboard Button -->
+                    <button id="teacher-view-scoreboard-btn"
+                        class="glass-panel rounded-2xl p-8 border border-orange-400/30 hover:bg-white/10 transition-all active:scale-95 cursor-pointer">
+                        <div class="flex items-center gap-4">
+                            <div class="w-16 h-16 rounded-2xl bg-orange-400/20 flex items-center justify-center">
+                                <span class="material-symbols-outlined text-orange-400 text-4xl">leaderboard</span>
+                            </div>
+                            <div class="text-left">
+                                <h3 class="text-xl font-bold text-white mb-1">Skor Tablosu</h3>
+                                <p class="text-sm text-gray-400">Tüm skorları görüntüle</p>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Recent Scores Preview -->
+                <div class="w-full max-w-4xl glass-panel rounded-2xl p-6 border border-white/10">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-bold text-white">Son Oyunlar</h3>
+                        <button id="teacher-view-all-scores"
+                            class="text-sm text-primary hover:text-primary/80 transition-colors">
+                            Tümünü Gör →
+                        </button>
+                    </div>
+                    <div id="teacher-recent-scores" class="space-y-2">
+                        <!-- Will be populated by JavaScript -->
+                        <div class="text-center py-8 text-gray-500 text-sm">
+                            <span class="material-symbols-outlined text-3xl mb-2 opacity-30">inbox</span>
+                            <p>Henüz oyun oynanan kayıt yok</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Button -->
+                <button id="teacher-settings-btn"
+                    class="flex items-center gap-2 px-6 py-3 rounded-full bg-glass-gradient border border-white/10 backdrop-blur-md hover:bg-white/10 transition-colors text-white font-bold text-sm tracking-wide shadow-lg group cursor-pointer">
+                    <span
+                        class="material-symbols-outlined text-cyan-300 group-hover:text-white transition-colors">settings</span>
+                    AYARLAR
+                </button>
+            </main>
+
+            <!-- Footer -->
+            <footer class="relative z-10 w-full p-6 text-center">
+                <p class="text-xs text-white/20 font-medium tracking-widest">ÖĞRETMEN MODU • OTURUM BAZLI</p>
             </footer>
         </section>
 
