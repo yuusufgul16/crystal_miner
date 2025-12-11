@@ -62,8 +62,8 @@
 
     // Game Configuration
     const LEVELS = [
-        { id: 1, max: 50, time: 180, xp: 100 },
-        { id: 2, max: 100, time: 300, xp: 200 }
+        { id: 1, max: 50, time: 5, xp: 100 },
+        { id: 2, max: 100, time: 5, xp: 200 }
     ];
 
     const ACHIEVEMENTS = {
@@ -524,6 +524,112 @@
         return `${mins}:${secs.toString().padStart(2, '0')}`;
     }
 
+    // ===== TEACHER MODE: STUDENT QUEUE MANAGEMENT =====
+    function getStudentQueue() {
+        const queue = sessionStorage.getItem('cm_student_queue');
+        return queue ? JSON.parse(queue) : [];
+    }
+
+    function saveStudentQueue(queue) {
+        sessionStorage.setItem('cm_student_queue', JSON.stringify(queue));
+        updateStudentQueueUI();
+    }
+
+    function addStudent(name) {
+        if (!name || name.trim() === '') return false;
+        const queue = getStudentQueue();
+        queue.push({
+            name: name.trim(),
+            id: Date.now(),
+            hasPlayed: false
+        });
+        saveStudentQueue(queue);
+        return true;
+    }
+
+    function removeStudent(id) {
+        const queue = getStudentQueue().filter(s => s.id !== id);
+        saveStudentQueue(queue);
+    }
+
+    function getCurrentStudent() {
+        const queue = getStudentQueue();
+        return queue.find(s => !s.hasPlayed) || null;
+    }
+
+    function markStudentAsPlayed() {
+        const queue = getStudentQueue();
+        const current = queue.find(s => !s.hasPlayed);
+        if (current) {
+            current.hasPlayed = true;
+            saveStudentQueue(queue);
+        }
+    }
+
+    function updateStudentQueueUI() {
+        const queue = getStudentQueue();
+        const studentList = document.getElementById('student-list');
+        const emptyList = document.getElementById('empty-student-list');
+        const studentCount = document.getElementById('student-count');
+        const currentPlayerInfo = document.getElementById('current-player-info');
+        const currentPlayerName = document.getElementById('current-player-name');
+
+        // Update count
+        studentCount.textContent = `${queue.length} öğrenci`;
+
+        // Show/hide empty state
+        if (queue.length === 0) {
+            emptyList?.classList.remove('hidden');
+            if (currentPlayerInfo) currentPlayerInfo.classList.add('hidden');
+        } else {
+            emptyList?.classList.add('hidden');
+        }
+
+        // Render student list
+        if (queue.length > 0 && studentList) {
+            const listHTML = queue.map(student => `
+                <div class="flex items-center justify-between p-3 rounded-lg ${student.hasPlayed ? 'bg-white/5' : 'bg-primary/10 border border-primary/30'} transition-all">
+                    <div class="flex items-center gap-3">
+                        ${student.hasPlayed
+                    ? '<span class="material-symbols-outlined text-green-400 text-xl">check_circle</span>'
+                    : '<span class="material-symbols-outlined text-primary text-xl">person</span>'}
+                        <span class="text-white font-medium ${student.hasPlayed ? 'line-through opacity-50' : ''}">${student.name}</span>
+                    </div>
+                    <button onclick="removeStudent(${student.id})" class="p-1 hover:bg-red-500/20 rounded transition-colors">
+                        <span class="material-symbols-outlined text-red-400 text-sm">close</span>
+                    </button>
+                </div>
+            `).join('');
+
+            // Remove empty state child if exists and add students
+            const emptyChild = studentList.querySelector('#empty-student-list');
+            if (emptyChild) emptyChild.remove();
+
+            studentList.innerHTML = listHTML;
+        }
+
+        // Update current player info
+        const currentStudent = getCurrentStudent();
+        if (currentStudent && currentPlayerInfo && currentPlayerName) {
+            currentPlayerInfo.classList.remove('hidden');
+            currentPlayerName.textContent = currentStudent.name;
+        } else if (currentPlayerInfo) {
+            currentPlayerInfo.classList.add('hidden');
+        }
+    }
+
+    function showTeacherStudentPanel(show) {
+        const panel = document.getElementById('teacher-student-panel');
+        if (panel) {
+            if (show && gameMode === 'teacher') {
+                panel.classList.remove('hidden');
+                updateStudentQueueUI();
+            } else {
+                panel.classList.add('hidden');
+            }
+        }
+    }
+
 
     // Initialize
     function init() {
@@ -562,6 +668,29 @@
             teacherScoreboardModal.classList.remove('active');
         });
         document.getElementById('teacher-clear-scores')?.addEventListener('click', clearTeacherScores);
+
+        // Teacher Student Queue Listeners
+        const addStudentBtn = document.getElementById('add-student-btn');
+        const studentNameInput = document.getElementById('student-name-input');
+
+        addStudentBtn?.addEventListener('click', () => {
+            const name = studentNameInput.value;
+            if (addStudent(name)) {
+                studentNameInput.value = ''; // Clear input
+                updateStudentQueueUI();
+            }
+        });
+
+        // Allow Enter key to add student
+        studentNameInput?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const name = studentNameInput.value;
+                if (addStudent(name)) {
+                    studentNameInput.value = '';
+                    updateStudentQueueUI();
+                }
+            }
+        });
 
         // Power-up Listeners
         Object.keys(powerUpBtns).forEach(type => {
@@ -671,6 +800,11 @@
     function showScreen(name) {
         Object.values(screens).forEach(s => s.classList.remove('active'));
         screens[name].classList.add('active');
+
+        // Show/hide teacher student panel on level screen
+        if (name === 'levels') {
+            showTeacherStudentPanel(gameMode === 'teacher');
+        }
     }
 
     function updatePlayerUI() {
@@ -1020,13 +1154,14 @@
         ui.finalScore.textContent = gameState.score;
         ui.earnedXp.textContent = xpGained;
 
-        // Teacher Mode: Add score to scoreboard
+        // Teacher Mode: Add score to scoreboard using student queue
         if (gameMode === 'teacher') {
-            // Prompt for student name
-            const studentName = prompt('Öğrenci adı girin:', 'Öğrenci ' + (getTeacherScores().length + 1));
-            if (studentName) {
+            const currentStudent = getCurrentStudent();
+            if (currentStudent) {
                 const timeElapsed = level.time - gameState.timeLeft;
-                addTeacherScore(studentName, gameState.score, gameState.currentLevel, timeElapsed);
+                addTeacherScore(currentStudent.name, gameState.score, gameState.currentLevel, timeElapsed);
+                markStudentAsPlayed(); // Mark this student as having played
+                updateStudentQueueUI(); // Update UI to show next student
             }
         }
 
@@ -1061,4 +1196,7 @@
 
     // Initialize game
     init();
+
+    // Expose removeStudent globally for inline onclick handlers
+    window.removeStudent = removeStudent;
 })();
