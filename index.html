@@ -146,9 +146,9 @@
                         <span
                             class="material-symbols-outlined absolute -top-4 -right-8 text-primary text-4xl animate-pulse">auto_awesome</span>
                         <span
-                            class="material-symbols-outlined absolute bottom-4 -left-8 text-cyan-300 text-2xl animate-pulse">spark</span>
+                            class="material-symbols-outlined absolute bottom-4 -left-8 text-cyan-300 text-2xl animate-pulse">auto_awesome</span>
                     </div>
-                    <p class="text-cyan-200/60 text-lg font-medium tracking-[0.2em] uppercase">Derin Uzay Bulmaca
+                    <p class="text-cyan-200/60 text-lg font-medium tracking-[0.2em] uppercase">Uzay Bulmaca
                         Macerası</p>
                 </div>
 
@@ -191,8 +191,148 @@
 
             <!-- Footer Info -->
             <footer class="relative z-10 w-full p-6 text-center">
-                <p class="text-xs text-white/20 font-medium tracking-widest">VERSION 1.0.4 • ID: 8823-XJ</p>
+                <p class="text-xs text-white/20 font-medium tracking-widest">SÜRÜM 1.0.4 • ID: 8823-XJ</p>
             </footer>
+        </section>
+
+        <!-- Mode Selection Screen -->
+        <section id="mode-screen"
+            class="screen w-full h-screen relative flex-col bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a1a2e] via-[#0f0f23] to-[#050510]">
+            <!-- Background Elements -->
+            <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                <div class="particle w-1 h-1 top-1/4 left-1/4 blur-[1px]"></div>
+                <div class="particle w-2 h-2 top-1/3 right-1/4 blur-[2px] opacity-30"></div>
+                <div class="particle w-1 h-1 top-2/3 left-1/3 blur-[1px]"></div>
+                <div class="particle w-1.5 h-1.5 bottom-1/4 right-1/3 blur-[1px] opacity-40"></div>
+                <!-- Glow Orb -->
+                <div
+                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[100px]">
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <main class="relative z-10 flex-grow flex flex-col items-center justify-center p-6 gap-8">
+                <!-- Title -->
+                <div class="text-center mb-4">
+                    <h2 class="text-4xl md:text-5xl font-black text-white mb-3 text-glow">Oyun Modu Seçin</h2>
+                    <p class="text-gray-400 text-sm md:text-base">Nasıl oynamak istersiniz?</p>
+                </div>
+
+                <!-- Mode Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
+                    <!-- Student Mode Card -->
+                    <button id="student-mode-btn"
+                        class="group relative glass-panel rounded-3xl p-8 hover:bg-white/10 transition-all duration-300 active:scale-95 border border-white/10 hover:border-cyan-400/50 cursor-pointer text-left overflow-hidden">
+                        <!-- Glow Effect -->
+                        <div
+                            class="absolute top-0 right-0 w-32 h-32 bg-cyan-400/10 rounded-full blur-xl -mr-16 -mt-16 transition-all group-hover:bg-cyan-400/20">
+                        </div>
+
+                        <!-- Content -->
+                        <div class="relative z-10">
+                            <!-- Icon -->
+                            <div
+                                class="w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-400/20 to-blue-500/20 border border-cyan-400/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                <span class="material-symbols-outlined text-cyan-400 text-5xl">school</span>
+                            </div>
+
+                            <!-- Title -->
+                            <h3 class="text-2xl font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">
+                                Öğrenci Modu
+                            </h3>
+
+                            <!-- Description -->
+                            <p class="text-gray-400 text-sm mb-4 leading-relaxed">
+                                Kendi ilerlemenizi takip edin. Başarımlar, yıldızlar ve XP kazanın. Tüm verileriniz
+                                kaydedilir ve her zaman devam edebilirsiniz.
+                            </p>
+
+                            <!-- Features -->
+                            <ul class="space-y-2 text-xs text-gray-500">
+                                <li class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+                                    İlerleme Kaydedilir
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+                                    Başarımlar Kazanılır
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+                                    Yıldızlar ve XP Sistemi
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Arrow -->
+                        <div
+                            class="absolute bottom-8 right-8 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all">
+                            <span class="material-symbols-outlined text-cyan-400 text-3xl">arrow_forward</span>
+                        </div>
+                    </button>
+
+                    <!-- Teacher Mode Card -->
+                    <button id="teacher-mode-btn"
+                        class="group relative glass-panel rounded-3xl p-8 hover:bg-white/10 transition-all duration-300 active:scale-95 border border-white/10 hover:border-orange-400/50 cursor-pointer text-left overflow-hidden">
+                        <!-- Glow Effect -->
+                        <div
+                            class="absolute top-0 right-0 w-32 h-32 bg-orange-400/10 rounded-full blur-xl -mr-16 -mt-16 transition-all group-hover:bg-orange-400/20">
+                        </div>
+
+                        <!-- Content -->
+                        <div class="relative z-10">
+                            <!-- Icon -->
+                            <div
+                                class="w-20 h-20 rounded-2xl bg-gradient-to-br from-orange-400/20 to-yellow-500/20 border border-orange-400/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                <span
+                                    class="material-symbols-outlined text-orange-400 text-5xl">workspace_premium</span>
+                            </div>
+
+                            <!-- Title -->
+                            <h3
+                                class="text-2xl font-bold text-white mb-3 group-hover:text-orange-400 transition-colors">
+                                Öğretmen Modu
+                            </h3>
+
+                            <!-- Description -->
+                            <p class="text-gray-400 text-sm mb-4 leading-relaxed">
+                                Sınıfınızda birden fazla öğrenciye oynatın. Anlık skor tablosu görün. Veriler
+                                kaydedilmez,
+                                tarayıcı kapanınca sıfırlanır.
+                            </p>
+
+                            <!-- Features -->
+                            <ul class="space-y-2 text-xs text-gray-500">
+                                <li class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+                                    Anlık Skor Tablosu
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+                                    Veri Kaydedilmez
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+                                    Oturum Bazlı
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Arrow -->
+                        <div
+                            class="absolute bottom-8 right-8 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all">
+                            <span class="material-symbols-outlined text-orange-400 text-3xl">arrow_forward</span>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Back Button -->
+                <button id="mode-back-btn"
+                    class="mt-4 flex items-center gap-2 px-6 py-3 rounded-full bg-glass-gradient border border-white/10 backdrop-blur-md hover:bg-white/10 transition-colors text-white font-bold text-sm tracking-wide shadow-lg cursor-pointer">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                    Ana Menü
+                </button>
+            </main>
         </section>
 
         <!-- Level Selection -->
@@ -253,7 +393,7 @@
                     <div class="md:col-span-6 glass-panel rounded-2xl p-4 flex flex-col justify-center relative">
                         <div class="flex items-center justify-between px-2 mb-1">
                             <span class="text-gray-400 text-sm font-medium">Mevcut Görev</span>
-                            <span class="text-primary text-sm font-bold">Level 4</span>
+                            <span class="text-primary text-sm font-bold">Seviye 4</span>
                         </div>
                         <div id="mission" class="flex items-end gap-4 mb-3 px-2">
                             <h1 class="text-3xl font-bold leading-none text-white">
@@ -361,7 +501,7 @@
                     <!-- Title -->
                     <div>
                         <h2 id="modal-title" class="text-3xl font-black text-white mb-2">SEVİYE TAMAMLANDI</h2>
-                        <p class="text-cyan-400 text-sm font-medium">7. Sektör Madenciliği Tamamlandı</p>
+                        <p class="text-cyan-400 text-sm font-medium">Sektör 7 Madencilik Tamamlandı</p>
                     </div>
 
                     <!-- Crystals Mined -->
@@ -445,11 +585,11 @@
                         <div>
                             <div class="flex items-center gap-2 text-primary mb-2">
                                 <span class="material-symbols-outlined text-xl">emoji_events</span>
-                                <span class="text-sm font-bold uppercase tracking-wider">Şöhretler Galerisi</span>
+                                <span class="text-sm font-bold uppercase tracking-wider">Şan Salonu</span>
                             </div>
                             <h2 class="text-4xl font-black text-white mb-2">BAŞARILAR</h2>
-                            <p class="text-gray-400 text-sm">Galaksi genelinde başarılarınızı takip edin. Başarıları
-                                açmak sizi XP ve nadir kristaller ile ödüllendirir.</p>
+                            <p class="text-gray-400 text-sm">Galaksideki kilometre taşlarınızı takip edin. Başarıların
+                                kilidini açmak size XP ve nadir kristaller kazandırır.</p>
                         </div>
 
                         <!-- Progress Card -->
@@ -481,7 +621,7 @@
                         <button class="achievement-filter-btn px-6 py-2 rounded-full font-bold text-sm transition-all"
                             data-filter="unlocked">
                             <span class="material-symbols-outlined text-sm mr-1">lock_open</span>
-                            Açılmış
+                            Açıldı
                         </button>
                         <button class="achievement-filter-btn px-6 py-2 rounded-full font-bold text-sm transition-all"
                             data-filter="locked">
@@ -554,7 +694,7 @@
                                 </div>
                                 <div>
                                     <div class="font-bold text-white">Ana Ses</div>
-                                    <div class="text-xs text-gray-400">Müzik ve Ortam</div>
+                                    <div class="text-xs text-gray-400">Müzik ve Ortam Sesi</div>
                                 </div>
                             </div>
                             <label class="toggle-switch">
@@ -609,7 +749,8 @@
 
                     <!-- ACTIVE POWER-UPS -->
                     <div class="settings-content-section">
-                        <h3 class="text-xs font-bold text-yellow-500 uppercase tracking-widest mb-4">Aktif Güçler
+                        <h3 class="text-xs font-bold text-yellow-500 uppercase tracking-widest mb-4">Aktif
+                            Güçlendirmeler
                         </h3>
 
                         <!-- Lightning -->
@@ -660,6 +801,85 @@
                         <button class="text-xs text-gray-400 hover:text-red-400 transition-colors">İlerlemeyi
                             Sıfırla</button>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Teacher Mode Scoreboard Modal -->
+    <div id="teacher-scoreboard-modal" class="modal">
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-[1001]">
+            <div
+                class="w-full max-w-4xl bg-gradient-to-br from-[#0f0f23] to-[#1a1a2e] rounded-3xl shadow-2xl max-h-[90vh] flex flex-col overflow-hidden border border-white/10">
+
+                <!-- Header -->
+                <div class="flex-none p-6 pb-4 border-b border-white/10">
+                    <div class="flex items-start justify-between mb-6">
+                        <div>
+                            <div class="flex items-center gap-2 text-orange-400 mb-2">
+                                <span class="material-symbols-outlined text-xl">workspace_premium</span>
+                                <span class="text-sm font-bold uppercase tracking-wider">Öğretmen Modu</span>
+                            </div>
+                            <h2 class="text-4xl font-black text-white mb-2">SKOR TABLOSU</h2>
+                            <p class="text-gray-400 text-sm">Mevcut oturumdaki tüm oyun skorları</p>
+                        </div>
+
+                        <!-- Stats Card -->
+                        <div class="glass-panel rounded-2xl p-4 min-w-[180px]">
+                            <div class="text-xs text-gray-400 uppercase tracking-wider mb-2">Toplam Oyun</div>
+                            <div class="flex items-baseline gap-2">
+                                <span class="text-3xl font-bold text-white" id="teacher-total-games">0</span>
+                                <span class="text-gray-400">oyun</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Info Alert -->
+                    <div class="glass-panel rounded-xl p-3 flex items-start gap-3 border border-orange-400/20">
+                        <span class="material-symbols-outlined text-orange-400 text-xl">info</span>
+                        <p class="text-xs text-gray-300 leading-relaxed">
+                            Bu skor tablosu geçici bir oturum tablosudur. Tarayıcı kapatıldığında tüm veriler silinir.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Scoreboard Table -->
+                <div class="flex-grow overflow-y-auto p-6">
+                    <table class="w-full">
+                        <thead class="sticky top-0 bg-[#0f0f23] z-10">
+                            <tr
+                                class="text-left text-xs text-gray-400 uppercase tracking-wider border-b border-white/10">
+                                <th class="pb-3 pr-4">#</th>
+                                <th class="pb-3 pr-4">Öğrenci Adı</th>
+                                <th class="pb-3 pr-4">Skor</th>
+                                <th class="pb-3 pr-4">Seviye</th>
+                                <th class="pb-3 pr-4">Süre</th>
+                                <th class="pb-3">Tarih</th>
+                            </tr>
+                        </thead>
+                        <tbody id="teacher-scoreboard-body" class="text-sm">
+                            <!-- Will be populated by JavaScript -->
+                            <tr>
+                                <td colspan="6" class="text-center py-12 text-gray-500">
+                                    <span class="material-symbols-outlined text-5xl mb-3 opacity-30">sports_score</span>
+                                    <p>Henüz oyun oynanan kayıt yok</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Footer -->
+                <div class="flex-none p-6 pt-4 border-t border-white/10 flex items-center justify-between">
+                    <button id="teacher-clear-scores"
+                        class="px-6 py-2 text-sm font-bold text-red-400 hover:text-red-300 transition-colors">
+                        <span class="material-symbols-outlined text-sm mr-1 align-middle">delete</span>
+                        Tabloyu Temizle
+                    </button>
+                    <button id="close-teacher-scoreboard"
+                        class="px-8 py-3 bg-primary hover:bg-primary/80 text-black font-bold rounded-full transition-all active:scale-95">
+                        Kapat
+                    </button>
                 </div>
             </div>
         </div>

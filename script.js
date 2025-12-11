@@ -5,9 +5,38 @@
     // DOM Elements
     const screens = {
         start: document.getElementById('start-screen'),
+        mode: document.getElementById('mode-screen'),
         levels: document.getElementById('level-screen'),
         game: document.getElementById('game-screen')
     };
+
+    // ===== GAME MODE MANAGEMENT =====
+    // 'student' = uses localStorage (persistent)
+    // 'teacher' = uses sessionStorage (temp, clears on browser close)
+    let gameMode = sessionStorage.getItem('cm_game_mode') || 'student'; // Default to student
+
+    // Get appropriate storage based on current mode
+    function getStorage() {
+        return gameMode === 'teacher' ? sessionStorage : localStorage;
+    }
+
+    // Set game mode and update storage
+    function setGameMode(mode) {
+        gameMode = mode;
+        sessionStorage.setItem('cm_game_mode', mode);
+
+        // If switching to teacher mode, ensure we're using clean sessionStorage
+        if (mode === 'teacher') {
+            // Clear previous teacher data if any
+            const keysToKeep = ['cm_game_mode'];
+            Object.keys(sessionStorage).forEach(key => {
+                if (key.startsWith('cm_') && !keysToKeep.includes(key)) {
+                    sessionStorage.removeItem(key);
+                }
+            });
+        }
+    }
+
 
     const ui = {
         playerLevel: document.getElementById('player-level'),
@@ -64,20 +93,20 @@
 
     // Player Data (persistent)
     let playerData = {
-        level: parseInt(localStorage.getItem('cm_player_level') || '1'),
-        xp: parseInt(localStorage.getItem('cm_xp') || '0'),
-        stars: JSON.parse(localStorage.getItem('cm_stars') || '{}'),
-        achievements: JSON.parse(localStorage.getItem('cm_achievements') || '{}'),
+        level: parseInt(getStorage().getItem('cm_player_level') || '1'),
+        xp: parseInt(getStorage().getItem('cm_xp') || '0'),
+        stars: JSON.parse(getStorage().getItem('cm_stars') || '{}'),
+        achievements: JSON.parse(getStorage().getItem('cm_achievements') || '{}'),
         // Force default structure if missing or empty
         powerups: (() => {
-            const saved = JSON.parse(localStorage.getItem('cm_powerups') || 'null');
+            const saved = JSON.parse(getStorage().getItem('cm_powerups') || 'null');
             // Check if saved is valid object and not empty
             if (!saved || typeof saved !== 'object' || Object.keys(saved).length === 0) {
                 return { lightning: 1, magnifier: 1, time: 1, dynamite: 1 };
             }
             return saved;
         })(),
-        tutorialsSeen: JSON.parse(localStorage.getItem('cm_tutorials_seen') || '{}')
+        tutorialsSeen: JSON.parse(getStorage().getItem('cm_tutorials_seen') || '{}')
     };
 
     // Ensure tutorialsSeen is an object (security check)
@@ -96,11 +125,11 @@
             playerData.powerups[type] = 1;
         }
     });
-    localStorage.setItem('cm_powerups', JSON.stringify(playerData.powerups));
+    getStorage().setItem('cm_powerups', JSON.stringify(playerData.powerups));
 
     // Audio Context
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    let muted = localStorage.getItem('cm_muted') === 'true';
+    let muted = getStorage().getItem('cm_muted') === 'true';
 
     // Sound Functions (Procedural)
     function playTone(freq, type, duration) {
@@ -275,7 +304,7 @@
             confirmModal.show(title, message, () => {
                 // User Confirmed
                 playerData.tutorialsSeen[type] = true;
-                localStorage.setItem('cm_tutorials_seen', JSON.stringify(playerData.tutorialsSeen));
+                getStorage().setItem('cm_tutorials_seen', JSON.stringify(playerData.tutorialsSeen));
                 // Call again to execute
                 usePowerUp(type);
             });
@@ -291,7 +320,7 @@
 
         if (success) {
             playerData.powerups[type]--;
-            localStorage.setItem('cm_powerups', JSON.stringify(playerData.powerups));
+            getStorage().setItem('cm_powerups', JSON.stringify(playerData.powerups));
             updatePowerUpUI();
             sounds.powerup();
         } else {
@@ -416,19 +445,92 @@
 
     function grantPowerUp(type, amount = 1) {
         playerData.powerups[type] = (playerData.powerups[type] || 0) + amount;
-        localStorage.setItem('cm_powerups', JSON.stringify(playerData.powerups));
+        getStorage().setItem('cm_powerups', JSON.stringify(playerData.powerups));
 
         // Notify user (toast) - simple alert for now
         const name = type === 'lightning' ? '⚡ Yıldırım' : (type === 'magnifier' ? '🔍 Büyüteç' : (type === 'time' ? '⏰ Zaman' : '💣 Dinamit'));
         // alert(`🎁 Kazandın: ${name} (+${amount})`); // Removed alert for better UX later
     }
 
+    // ===== TEACHER MODE SCOREBOARD =====
+    function getTeacherScores() {
+        const scores = sessionStorage.getItem('cm_teacher_scores');
+        return scores ? JSON.parse(scores) : [];
+    }
+
+    function addTeacherScore(studentName, score, level, timeElapsed) {
+        const scores = getTeacherScores();
+        const newScore = {
+            studentName: studentName || 'Öğrenci',
+            score: score,
+            level: level,
+            timeElapsed: timeElapsed,
+            timestamp: new Date().toLocaleString('tr-TR')
+        };
+        scores.push(newScore);
+        // Sort by score descending
+        scores.sort((a, b) => b.score - a.score);
+        sessionStorage.setItem('cm_teacher_scores', JSON.stringify(scores));
+    }
+
+    function displayTeacherScoreboard() {
+        const modal = document.getElementById('teacher-scoreboard-modal');
+        const tbody = document.getElementById('teacher-scoreboard-body');
+        const totalGames = document.getElementById('teacher-total-games');
+
+        const scores = getTeacherScores();
+        totalGames.textContent = scores.length;
+
+        if (scores.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center py-12 text-gray-500">
+                        <span class="material-symbols-outlined text-5xl mb-3 opacity-30">sports_score</span>
+                        <p>Henüz oyun oynanan kayıt yok</p>
+                    </td>
+                </tr>
+            `;
+        } else {
+            tbody.innerHTML = scores.map((s, index) => `
+                <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                    <td class="py-3 pr-4 font-bold ${index < 3 ? 'text-yellow-400' : 'text-gray-400'}">${index + 1}</td>
+                    <td class="py-3 pr-4 text-white font-medium">${s.studentName}</td>
+                    <td class="py-3 pr-4">
+                        <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/20 text-primary font-bold text-xs">
+                            <span class="material-symbols-outlined text-xs">diamond</span>
+                            ${s.score}
+                        </span>
+                    </td>
+                    <td class="py-3 pr-4 text-gray-300">Seviye ${s.level}</td>
+                    <td class="py-3 pr-4 text-gray-400">${formatTime(s.timeElapsed)}</td>
+                    <td class="py-3 text-gray-500 text-xs">${s.timestamp}</td>
+                </tr>
+            `).join('');
+        }
+
+        modal.classList.add('active');
+    }
+
+    function clearTeacherScores() {
+        if (confirm('Tüm skor tablosunu silmek istediğinize emin misiniz?')) {
+            sessionStorage.removeItem('cm_teacher_scores');
+            displayTeacherScoreboard(); // Refresh display
+        }
+    }
+
+    function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+
+
     // Initialize
     function init() {
         // Emergency refill if all powerups are 0 (Fix for user issue)
         if (playerData.powerups && Object.values(playerData.powerups).every(v => v === 0)) {
             playerData.powerups = { lightning: 1, magnifier: 1, time: 1, dynamite: 1 };
-            localStorage.setItem('cm_powerups', JSON.stringify(playerData.powerups));
+            getStorage().setItem('cm_powerups', JSON.stringify(playerData.powerups));
         }
 
         updatePlayerUI();
@@ -437,8 +539,31 @@
         renderAchievements();
 
         // Event Listeners
-        document.getElementById('start-btn').addEventListener('click', () => showScreen('levels'));
+        // Show mode selection screen instead of directly going to levels
+        document.getElementById('start-btn').addEventListener('click', () => showScreen('mode'));
         document.getElementById('back-btn').addEventListener('click', () => showScreen('start'));
+
+        // Mode Selection Listeners
+        document.getElementById('student-mode-btn').addEventListener('click', () => {
+            setGameMode('student');
+            // Reload player data for student mode
+            location.reload(); // Simple reload to ensure proper storage loading
+        });
+
+        document.getElementById('teacher-mode-btn').addEventListener('click', () => {
+            setGameMode('teacher');
+            // Reload to ensure sessionStorage is used
+            location.reload();
+        });
+
+        document.getElementById('mode-back-btn').addEventListener('click', () => showScreen('start'));
+
+        // Teacher Scoreboard Listeners
+        const teacherScoreboardModal = document.getElementById('teacher-scoreboard-modal');
+        document.getElementById('close-teacher-scoreboard')?.addEventListener('click', () => {
+            teacherScoreboardModal.classList.remove('active');
+        });
+        document.getElementById('teacher-clear-scores')?.addEventListener('click', clearTeacherScores);
 
         // Power-up Listeners
         Object.keys(powerUpBtns).forEach(type => {
@@ -509,14 +634,12 @@
 
         // Sound toggle
         const soundBtn = document.getElementById('toggle-sound-btn');
-        soundBtn.checked = !muted;
-        soundBtn.addEventListener('click', () => {
-            muted = !muted;
-            localStorage.setItem('cm_muted', muted);
-            soundBtn.checked = !muted;
+        // Toggle switch olarak değiştirildi, textContent kullanılmıyor
+        soundBtn.addEventListener('change', () => {
+            muted = !soundBtn.checked;
+            getStorage().setItem('cm_muted', muted);
             if (!muted) {
                 if (audioCtx.state === 'suspended') audioCtx.resume();
-                sounds.select();
             }
         });
 
@@ -565,8 +688,8 @@
             createParticles(window.innerWidth / 2, 100, 'star', 50);
         }
 
-        localStorage.setItem('cm_xp', playerData.xp);
-        localStorage.setItem('cm_player_level', playerData.level);
+        getStorage().setItem('cm_xp', playerData.xp);
+        getStorage().setItem('cm_player_level', playerData.level);
         updatePlayerUI();
     }
 
@@ -866,7 +989,7 @@
         const prevStars = playerData.stars[gameState.currentLevel] || 0;
         if (stars > prevStars) {
             playerData.stars[gameState.currentLevel] = stars;
-            localStorage.setItem('cm_stars', JSON.stringify(playerData.stars));
+            getStorage().setItem('cm_stars', JSON.stringify(playerData.stars));
         }
 
         const xpGained = success ? level.xp + (stars * 20) : Math.floor(level.xp / 2);
@@ -904,7 +1027,7 @@
         if (ACHIEVEMENTS[key] && !ACHIEVEMENTS[key].unlocked) {
             ACHIEVEMENTS[key].unlocked = true;
             playerData.achievements[key] = true;
-            localStorage.setItem('cm_achievements', JSON.stringify(playerData.achievements));
+            getStorage().setItem('cm_achievements', JSON.stringify(playerData.achievements));
 
             const div = document.createElement('div');
             div.className = 'achievement-item';
