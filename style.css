@@ -1182,3 +1182,8 @@ body {
     scrollbar-width: thin;
     scrollbar-color: #2bee79 rgba(255, 255, 255, 0.05);
 }
+
+/* Settings Tab Content */
+.tab-content.hidden {
+    display: none;
+}

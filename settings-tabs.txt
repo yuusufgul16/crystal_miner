@@ -1,0 +1,44 @@
+HAKKINDA VE DESTEK TAB İÇERİKLERİ
+
+Bu içerikleri HTML'e manuel olarak ekleyebilirsiniz. 
+
+Ayarlar sayfasının mevcut içerik div'inden (<!-- Content -->) sonra, kapanış div'lerinden önce eklenecek:
+
+TAB SİSTEMİ İÇİN CSS:
+```css
+.tab-content {
+    display: none;
+}
+
+.tab-content:not(.hidden) {
+    display: block;
+}
+```
+
+JavaScript Tab Switcher eklenecek (init fonksiyonuna):
+```javascript
+// Settings Tab Switcher
+const tabBtns = document.querySelectorAll('.settings-tab-btn');
+if (tabBtns.length > 0) {
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Tüm tablardan active kaldır
+            tabBtns.forEach(b => b.classList.remove('active'));
+            // Tıklanan taba active ekle
+            btn.classList.add('active');
+            
+            // Tüm tab içeriklerini gizle
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            
+            // İlgili tab içeriğini göster
+            const tabName = btn.getAttribute('data-tab');
+            const targetTab = document.getElementById(`tab-${tabName}`);
+            if (targetTab) {
+                targetTab.classList.remove('hidden');
+            }
+        });
+    });
+}
+```
+
+Kullanıcıya bildirin: Tab sistemi için JavaScript ve CSS kodu hazırladım. Dosyaya manuel eklenebilir.

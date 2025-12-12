@@ -7,7 +7,8 @@
         start: document.getElementById('start-screen'),
         levels: document.getElementById('level-screen'),
         game: document.getElementById('game-screen'),
-        achievements: document.getElementById('achievements-screen')
+        achievements: document.getElementById('achievements-screen'),
+        settings: document.getElementById('settings-screen')
     };
 
     const ui = {
@@ -460,8 +461,6 @@
         });
 
         // Settings Listeners
-        // Settings Listeners
-        const settingsModal = document.getElementById('settings-modal');
         const ingameControls = document.getElementById('ingame-controls');
 
         // Main Menu Settings Button (Start Screen)
@@ -469,7 +468,7 @@
         if (settingsBtn) {
             settingsBtn.addEventListener('click', () => {
                 if (ingameControls) ingameControls.style.display = 'none'; // Hide in-game controls
-                settingsModal.classList.add('active');
+                showScreen('settings');
             });
         }
 
@@ -483,16 +482,22 @@
                     gameState.timerInterval = null;
                 }
                 if (ingameControls) ingameControls.style.display = 'flex'; // Show in-game controls
-                settingsModal.classList.add('active');
+                showScreen('settings');
             });
         }
 
+        // Close Settings Button
         document.getElementById('close-settings').addEventListener('click', () => {
-            settingsModal.classList.remove('active');
-
-            // RESUME GAME if we are in game screen and have time left
-            if (!screens.game.classList.contains('hidden') && gameState.timeLeft > 0 && !gameState.timerInterval && (!ui.resultModal.classList.contains('active'))) {
-                startTimer();
+            // Oyun içindeyken settings açıldıysa game screen'e dön, değilse start'a dön
+            if (ingameControls && ingameControls.style.display === 'flex') {
+                ingameControls.style.display = 'none'; // Hide in-game controls
+                showScreen('game');
+                // RESUME GAME if we have time left
+                if (gameState.timeLeft > 0 && !gameState.timerInterval && (!ui.resultModal.classList.contains('active'))) {
+                    startTimer();
+                }
+            } else {
+                showScreen('start');
             }
         });
 
@@ -500,7 +505,7 @@
         const restartBtn = document.getElementById('restart-level-btn');
         if (restartBtn) {
             restartBtn.addEventListener('click', () => {
-                settingsModal.classList.remove('active');
+                if (ingameControls) ingameControls.style.display = 'none';
                 startGame(gameState.currentLevel); // Restart current level
             });
         }
@@ -508,7 +513,7 @@
         const mainMenuBtn = document.getElementById('main-menu-btn');
         if (mainMenuBtn) {
             mainMenuBtn.addEventListener('click', () => {
-                settingsModal.classList.remove('active');
+                if (ingameControls) ingameControls.style.display = 'none';
                 clearInterval(gameState.timerInterval); // Ensure stopped
                 showScreen('start');
             });
@@ -563,6 +568,30 @@
                 infoModal.classList.remove('active');
             });
         }
+
+        // Settings Tab Switcher
+        const settingsTabBtns = document.querySelectorAll('.settings-tab-btn');
+        if (settingsTabBtns.length > 0) {
+            settingsTabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Tüm tablardan active kaldır
+                    settingsTabBtns.forEach(b => b.classList.remove('active'));
+                    // Tıklanan taba active ekle
+                    btn.classList.add('active');
+
+                    // Tüm tab içeriklerini gizle
+                    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+
+                    // İlgili tab içeriğini göster
+                    const tabName = btn.getAttribute('data-tab');
+                    const targetTab = document.getElementById(`tab-${tabName}`);
+                    if (targetTab) {
+                        targetTab.classList.remove('hidden');
+                    }
+                });
+            });
+        }
+
         document.getElementById('next-level-btn').addEventListener('click', () => {
             ui.resultModal.classList.remove('active');
             ui.newAchievements.innerHTML = '';
