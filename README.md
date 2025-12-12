@@ -2,7 +2,7 @@
 
 **Crystal Miner**, oyuncuların uzayın derinliklerinde "değerli kristaller" (asal sayılar) aradığı, eğitici ve eğlenceli bir bulmaca oyunudur. Eratosthenes Kalburu algoritmasını temel alan bu oyun, matematiksel düşünme becerilerini geliştirirken keyifli bir görsel deneyim sunar.
 
-![Oyun Görseli](https://via.placeholder.com/800x400?text=Crystal+Miner+Gameplay)
+![image](https://r.resimlink.com/f2eUpqd.png)
 
 ## 🎮 Oyun Hakkında
 
