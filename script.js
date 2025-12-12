@@ -33,6 +33,7 @@
         finalScore: document.getElementById('final-score'),
         earnedXp: document.getElementById('earned-xp'),
         totalStars: document.getElementById('total-stars-display'),
+        totalScore: document.getElementById('total-score-display'),
         currentLevel: document.getElementById('current-level')
     };
 
@@ -75,6 +76,7 @@
         stars: JSON.parse(localStorage.getItem('cm_stars') || '{}'),
         achievements: JSON.parse(localStorage.getItem('cm_achievements') || '{}'),
         highScore: parseInt(localStorage.getItem('cm_high_score') || '0'),
+        totalScore: parseInt(localStorage.getItem('cm_total_score') || '0'),
         // Force default structure if missing or empty
         powerups: (() => {
             const saved = JSON.parse(localStorage.getItem('cm_powerups') || 'null');
@@ -461,13 +463,13 @@
         });
 
         // Settings Listeners
-        const ingameControls = document.getElementById('ingame-controls');
+        const ingameControls = document.getElementById('ingame-controls-header');
 
         // Main Menu Settings Button (Start Screen)
         const settingsBtn = document.getElementById('settings-btn');
         if (settingsBtn) {
             settingsBtn.addEventListener('click', () => {
-                if (ingameControls) ingameControls.style.display = 'none'; // Hide in-game controls
+                if (ingameControls) ingameControls.classList.add('hidden'); // Hide in-game controls
                 showScreen('settings');
             });
         }
@@ -481,7 +483,7 @@
                     clearInterval(gameState.timerInterval);
                     gameState.timerInterval = null;
                 }
-                if (ingameControls) ingameControls.style.display = 'flex'; // Show in-game controls
+                if (ingameControls) ingameControls.classList.remove('hidden'); // Show in-game controls
                 showScreen('settings');
             });
         }
@@ -489,8 +491,8 @@
         // Close Settings Button
         document.getElementById('close-settings').addEventListener('click', () => {
             // Oyun içindeyken settings açıldıysa game screen'e dön, değilse start'a dön
-            if (ingameControls && ingameControls.style.display === 'flex') {
-                ingameControls.style.display = 'none'; // Hide in-game controls
+            if (ingameControls && !ingameControls.classList.contains('hidden')) {
+                ingameControls.classList.add('hidden'); // Hide in-game controls
                 showScreen('game');
                 // RESUME GAME if we have time left
                 if (gameState.timeLeft > 0 && !gameState.timerInterval && (!ui.resultModal.classList.contains('active'))) {
@@ -505,7 +507,7 @@
         const restartBtn = document.getElementById('restart-level-btn');
         if (restartBtn) {
             restartBtn.addEventListener('click', () => {
-                if (ingameControls) ingameControls.style.display = 'none';
+                if (ingameControls) ingameControls.classList.add('hidden');
                 startGame(gameState.currentLevel); // Restart current level
             });
         }
@@ -513,7 +515,7 @@
         const mainMenuBtn = document.getElementById('main-menu-btn');
         if (mainMenuBtn) {
             mainMenuBtn.addEventListener('click', () => {
-                if (ingameControls) ingameControls.style.display = 'none';
+                if (ingameControls) ingameControls.classList.add('hidden');
                 clearInterval(gameState.timerInterval); // Ensure stopped
                 showScreen('start');
             });
@@ -627,6 +629,11 @@
         const xpPercent = (playerData.xp / xpNeeded) * 100;
         ui.xpBar.style.width = xpPercent + '%';
         ui.xpText.textContent = `${playerData.xp} / ${xpNeeded} XP`;
+
+        // Toplam Skoru Güncelle
+        if (ui.totalScore) {
+            ui.totalScore.textContent = playerData.totalScore.toLocaleString('tr-TR');
+        }
     }
 
     function addXP(amount) {
@@ -1035,6 +1042,11 @@
             playerData.highScore = gameState.score;
             localStorage.setItem('cm_high_score', playerData.highScore);
         }
+
+        // Toplam Skor Güncelleme
+        playerData.totalScore += gameState.score;
+        localStorage.setItem('cm_total_score', playerData.totalScore);
+        updatePlayerUI(); // UI'daki toplam skoru güncelle
 
         ui.starsDisplay.innerHTML = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
         ui.finalScore.textContent = gameState.score;

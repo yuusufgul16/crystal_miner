@@ -220,10 +220,10 @@
                 <div
                     class="hidden md:flex items-center gap-4 px-6 py-3 rounded-full bg-glass-gradient border border-white/10 backdrop-blur-md">
                     <div class="flex flex-col items-end">
-                        <span class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">TOPLAM YILDIZ</span>
-                        <div class="flex items-center gap-1 text-yellow-400 font-bold">
-                            <span class="material-symbols-outlined text-sm">star</span>
-                            <span id="total-stars-display">0</span>
+                        <span class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">TOPLAM SKOR</span>
+                        <div class="flex items-center gap-1 text-cyan-400 font-bold">
+                            <span class="material-symbols-outlined text-sm">analytics</span>
+                            <span id="total-score-display">0</span>
                         </div>
                     </div>
                 </div>
@@ -243,7 +243,7 @@
                     class="flex items-center gap-3 px-8 py-4 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-white font-bold transition-all active:scale-95 group">
                     <span
                         class="material-symbols-outlined group-hover:-translate-x-1 transition-transform">arrow_back</span>
-                    ANA MENÜYE DÖN
+                    ANA MENÜ
                 </button>
             </div>
         </section>
@@ -601,11 +601,30 @@
                         <p class="text-gray-400 text-sm">Oyun deneyiminizi özelleştirin.</p>
                     </div>
 
-                    <!-- Close Button -->
-                    <button id="close-settings"
-                        class="p-2 hover:bg-white/10 rounded-lg transition-colors text-gray-400 hover:text-white">
-                        <span class="material-symbols-outlined">close</span>
-                    </button>
+                    <!-- Action Buttons -->
+                    <div class="flex items-center gap-2">
+                        <!-- In-Game Controls (sadece oyun içinden açıldığında görünür) -->
+                        <div id="ingame-controls-header" class="hidden flex items-center gap-2">
+                            <button id="restart-level-btn"
+                                class="p-2 hover:bg-white/10 rounded-lg transition-colors text-gray-400 hover:text-white"
+                                title="Bölümü Yeniden Başlat">
+                                <span class="material-symbols-outlined">restart_alt</span>
+                            </button>
+                            <button id="main-menu-btn"
+                                class="p-2 hover:bg-white/10 rounded-lg transition-colors text-gray-400 hover:text-white"
+                                title="Ana Menüye Dön">
+                                <span class="material-symbols-outlined">home</span>
+                            </button>
+                            <!-- Separator -->
+                            <div class="w-px h-6 bg-white/10"></div>
+                        </div>
+
+                        <!-- Close Button -->
+                        <button id="close-settings"
+                            class="p-2 hover:bg-white/10 rounded-lg transition-colors text-gray-400 hover:text-white">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Tabs -->
@@ -756,18 +775,6 @@
                                 <div class="text-xs text-gray-400">Hata yapmanı önlemek için <strong>5 rastgele değersiz
                                         taşı</strong> patlatır. Asla kristallere zarar vermez.</div>
                             </div>
-                        </div>
-
-                        <!-- In-game controls (oyun içindeyken gösterilecek) -->
-                        <div id="ingame-controls" class="mt-4 space-y-2 hidden">
-                            <button id="restart-level-btn"
-                                class="w-full px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl font-bold text-white transition-all">
-                                🔄 Bölümü Yeniden Başlat
-                            </button>
-                            <button id="main-menu-btn"
-                                class="w-full px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl font-bold text-white transition-all">
-                                🏠 Ana Menüye Dön
-                            </button>
                         </div>
                     </div>
                 </div>
