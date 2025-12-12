@@ -951,6 +951,13 @@
 
         ui.starsDisplay.innerHTML = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
         ui.finalScore.textContent = gameState.score;
+
+        // Toplam Skor elementini de güncelle (oyun sonu modalında)
+        const totalScoreElement = document.getElementById('total-score');
+        if (totalScoreElement) {
+            totalScoreElement.textContent = gameState.score;
+        }
+
         ui.earnedXp.textContent = xpGained;
 
         sounds.complete();
