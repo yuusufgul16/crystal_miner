@@ -11,6 +11,7 @@
     };
 
     const ui = {
+        playerName: document.getElementById('player-name'),
         playerLevel: document.getElementById('player-level'),
         xpBar: document.getElementById('xp-bar'),
         xpText: document.getElementById('xp-text'),
@@ -24,7 +25,7 @@
         combo: document.getElementById('combo'),
         comboValue: document.getElementById('combo-value'),
         resultModal: document.getElementById('result-modal'),
-        // achievementsModal r emoved (now a screen)
+        // achievementsModal removed (now a screen)
         achievementsList: document.getElementById('achievements-list'),
         newAchievements: document.getElementById('new-achievements'),
         starsDisplay: document.getElementById('stars-display'),
@@ -67,6 +68,7 @@
 
     // Player Data (persistent)
     let playerData = {
+        name: localStorage.getItem('cm_player_name') || 'SpaceMiner_99',
         level: parseInt(localStorage.getItem('cm_player_level') || '1'),
         xp: parseInt(localStorage.getItem('cm_xp') || '0'),
         stars: JSON.parse(localStorage.getItem('cm_stars') || '{}'),
@@ -567,6 +569,7 @@
     }
 
     function updatePlayerUI() {
+        ui.playerName.textContent = playerData.name;
         ui.playerLevel.textContent = playerData.level;
         const xpNeeded = playerData.level * 100;
         const xpPercent = (playerData.xp / xpNeeded) * 100;
@@ -695,8 +698,17 @@
             tile.textContent = i;
             tile.dataset.value = i;
             tile.addEventListener('click', () => handleTileClick(i));
+
+            // 1 sayısını otomatik olarak elenmiş olarak başlat
+            if (i === 1) {
+                tile.classList.add('eliminated');
+            }
+
             ui.grid.appendChild(tile);
-            gameState.grid.push({ value: i, state: 'normal', isPrime: primes.includes(i) });
+
+            // Grid state'i de 1 için 'eliminated' olarak ayarla
+            const initialState = i === 1 ? 'eliminated' : 'normal';
+            gameState.grid.push({ value: i, state: initialState, isPrime: primes.includes(i) });
         }
     }
 
