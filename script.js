@@ -73,6 +73,7 @@
         xp: parseInt(localStorage.getItem('cm_xp') || '0'),
         stars: JSON.parse(localStorage.getItem('cm_stars') || '{}'),
         achievements: JSON.parse(localStorage.getItem('cm_achievements') || '{}'),
+        highScore: parseInt(localStorage.getItem('cm_high_score') || '0'),
         // Force default structure if missing or empty
         powerups: (() => {
             const saved = JSON.parse(localStorage.getItem('cm_powerups') || 'null');
@@ -528,6 +529,23 @@
             showScreen('start');
         });
 
+        // Achievement Filter Buttons
+        const filterBtns = document.querySelectorAll('.achievement-filter-btn');
+        if (filterBtns.length > 0) {
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Tüm butonlardan active class'ını kaldır
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    // Tıklanan butona active class ekle
+                    btn.classList.add('active');
+
+                    // Filtre değerini al ve başarıları filtrele
+                    const filter = btn.getAttribute('data-filter');
+                    renderAchievements(filter);
+                });
+            });
+        }
+
 
         // Store Button Logic - Opens Info Modal
         const storeBtn = document.getElementById('store-btn');
@@ -566,6 +584,11 @@
     function showScreen(name) {
         Object.values(screens).forEach(s => s.classList.remove('active'));
         screens[name].classList.add('active');
+
+        // Başarılar ekranı açıldığında ilerleme panelini güncelle
+        if (name === 'achievements') {
+            renderAchievements();
+        }
     }
 
     function updatePlayerUI() {
@@ -639,9 +662,18 @@
         ui.totalStars.textContent = total;
     }
 
-    function renderAchievements() {
+    function renderAchievements(filter = 'all') {
         ui.achievementsList.innerHTML = '';
-        Object.entries(ACHIEVEMENTS).forEach(([key, ach]) => {
+
+        // Başarıları filtrele
+        const filteredAchievements = Object.entries(ACHIEVEMENTS).filter(([key, ach]) => {
+            if (filter === 'unlocked') return ach.unlocked === true;
+            if (filter === 'locked') return ach.unlocked === false;
+            return true; // 'all' - hepsini göster
+        });
+
+        // Filtrelenmiş başarıları render et
+        filteredAchievements.forEach(([key, ach]) => {
             const div = document.createElement('div');
             div.className = 'achievement' + (ach.unlocked ? ' unlocked' : '');
             div.innerHTML = `
@@ -651,6 +683,26 @@
             `;
             ui.achievementsList.appendChild(div);
         });
+
+        // Toplam İlerleme Panelini Güncelle (her zaman tüm başarıları göster)
+        const totalAchievements = Object.keys(ACHIEVEMENTS).length; // 7 başarı
+        const unlockedAchievements = Object.values(ACHIEVEMENTS).filter(ach => ach.unlocked).length;
+        const progressPercentage = totalAchievements > 0 ? Math.round((unlockedAchievements / totalAchievements) * 100) : 0;
+
+        // UI Elementlerini Güncelle
+        const achievementsUnlockedEl = document.getElementById('achievements-unlocked');
+        const achievementsTotalEl = document.getElementById('achievements-total');
+        const achievementsProgressBar = document.getElementById('achievements-progress-bar');
+        const achievementsPercentage = document.getElementById('achievements-percentage');
+        const highScoreDisplay = document.getElementById('high-score-display');
+
+        if (achievementsUnlockedEl) achievementsUnlockedEl.textContent = unlockedAchievements;
+        if (achievementsTotalEl) achievementsTotalEl.textContent = totalAchievements;
+        if (achievementsProgressBar) achievementsProgressBar.style.width = progressPercentage + '%';
+        if (achievementsPercentage) achievementsPercentage.textContent = progressPercentage + '%';
+
+        // En Yüksek Skoru Güncelle
+        if (highScoreDisplay) highScoreDisplay.textContent = playerData.highScore.toLocaleString('tr-TR');
     }
 
     function startGame(levelId) {
@@ -947,6 +999,12 @@
                 grantPowerUp(type, 1);
             }
             updatePowerUpUI();
+        }
+
+        // En Yüksek Skor Kontrolü ve Güncellemesi
+        if (gameState.score > playerData.highScore) {
+            playerData.highScore = gameState.score;
+            localStorage.setItem('cm_high_score', playerData.highScore);
         }
 
         ui.starsDisplay.innerHTML = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);

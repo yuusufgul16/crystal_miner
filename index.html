@@ -524,24 +524,36 @@
                     </div>
                 </div>
 
-                <!-- Filter Buttons -->
-                <div class="flex gap-3">
-                    <button
-                        class="achievement-filter-btn active px-6 py-2 rounded-full font-bold text-sm transition-all"
-                        data-filter="all">
-                        <span class="material-symbols-outlined text-sm mr-1">grid_view</span>
-                        Tümü
-                    </button>
-                    <button class="achievement-filter-btn px-6 py-2 rounded-full font-bold text-sm transition-all"
-                        data-filter="unlocked">
-                        <span class="material-symbols-outlined text-sm mr-1">lock_open</span>
-                        Açıldı
-                    </button>
-                    <button class="achievement-filter-btn px-6 py-2 rounded-full font-bold text-sm transition-all"
-                        data-filter="locked">
-                        <span class="material-symbols-outlined text-sm mr-1">lock</span>
-                        Kilitli
-                    </button>
+                <!-- Filter Buttons & High Score -->
+                <div class="flex items-center justify-between gap-4">
+                    <div class="flex gap-3">
+                        <button
+                            class="achievement-filter-btn active px-6 py-2 rounded-full font-bold text-sm transition-all"
+                            data-filter="all">
+                            <span class="material-symbols-outlined text-sm mr-1">grid_view</span>
+                            Tümü
+                        </button>
+                        <button class="achievement-filter-btn px-6 py-2 rounded-full font-bold text-sm transition-all"
+                            data-filter="unlocked">
+                            <span class="material-symbols-outlined text-sm mr-1">check_circle</span>
+                            Açıldı
+                        </button>
+                        <button class="achievement-filter-btn px-6 py-2 rounded-full font-bold text-sm transition-all"
+                            data-filter="locked">
+                            <span class="material-symbols-outlined text-sm mr-1">lock</span>
+                            Kilitli
+                        </button>
+                    </div>
+
+                    <!-- High Score Card -->
+                    <div class="glass-panel rounded-xl px-5 py-3 flex items-center gap-3">
+                        <div class="flex flex-col items-end">
+                            <span class="text-[10px] text-gray-400 uppercase tracking-wider">En Yüksek Skor</span>
+                            <span id="high-score-display"
+                                class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">0</span>
+                        </div>
+                        <span class="material-symbols-outlined text-yellow-400 text-3xl">emoji_events</span>
+                    </div>
                 </div>
             </div>
 
