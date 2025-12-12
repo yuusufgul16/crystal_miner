@@ -432,8 +432,51 @@
         // alert(`🎁 Kazandın: ${name} (+${amount})`); // Removed alert for better UX later
     }
 
+    // Background Effects System
+    function initBackgroundEffects() {
+        const container = document.getElementById('background-effects');
+        if (!container) return;
+
+        const shapes = ['★', '✦', '✨', '💎', '🔷', '🔮', '❄️'];
+        const count = 40; // Number of items
+
+        for (let i = 0; i < count; i++) {
+            const div = document.createElement('div');
+            div.classList.add('bg-item');
+
+            // Random shape
+            const shape = shapes[Math.floor(Math.random() * shapes.length)];
+            div.textContent = shape;
+
+            // Type class for specific styling
+            if (['💎', '🔷', '🔮', '❄️'].includes(shape)) {
+                div.classList.add('bg-crystal');
+            } else {
+                div.classList.add('bg-star');
+            }
+
+            // Random position and animation
+            const left = Math.random() * 100;
+            const size = 8 + Math.random() * 24; // Size variation
+            const duration = 20 + Math.random() * 40; // Slow movement
+            const delay = Math.random() * -60; // Start at random progress
+
+            div.style.left = `${left}%`;
+            div.style.fontSize = `${size}px`;
+            div.style.animationDuration = `${duration}s`;
+            div.style.animationDelay = `${delay}s`;
+
+            // Random opacity for depth effect
+            div.style.opacity = 0.1 + Math.random() * 0.4;
+
+            container.appendChild(div);
+        }
+    }
+
     // Initialize
     function init() {
+        initBackgroundEffects();
+
         // Emergency refill if all powerups are 0 (Fix for user issue)
         if (playerData.powerups && Object.values(playerData.powerups).every(v => v === 0)) {
             playerData.powerups = { lightning: 1, magnifier: 1, time: 1, dynamite: 1 };
