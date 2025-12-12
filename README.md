@@ -23,19 +23,7 @@ Görevin: Bir "Kristal" (Asal Sayı) seçmek ve onun güvenli bir şekilde çık
 *   **Başarılar:** "Hızlı Eller", "Kusursuz Kazı" gibi başarıların kilidini aç.
 *   **Mobil Uyumlu:** Telefon, tablet ve masaüstünde sorunsuz çalışır (PWA desteği).
 
-## 🛠️ Kurulum ve Çalıştırma
 
-Bu projeyi kendi bilgisayarınızda çalıştırmak veya geliştirmek için:
-
-1.  Bu depoyu klonlayın:
-    ```bash
-    git clone https://github.com/KULLANICI_ADINIZ/crystal-miner.git
-    ```
-2.  Proje klasörüne gidin:
-    ```bash
-    cd crystal-miner
-    ```
-3.  `index.html` dosyasını favori tarayıcınızda açın. Herhangi bir sunucu kurulumu gerektirmez!
 
 ## 🤝 Katkıda Bulunma
 
