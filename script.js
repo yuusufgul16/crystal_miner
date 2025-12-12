@@ -594,12 +594,15 @@
             });
         }
 
-        document.getElementById('next-level-btn').addEventListener('click', () => {
-            ui.resultModal.classList.remove('active');
-            ui.newAchievements.innerHTML = '';
-            const nextLevel = Math.min(gameState.currentLevel + 1, LEVELS.length);
-            startGame(nextLevel);
-        });
+        const nextLevelBtn = document.getElementById('next-level-btn');
+        if (nextLevelBtn) {
+            nextLevelBtn.addEventListener('click', () => {
+                ui.resultModal.classList.remove('active');
+                ui.newAchievements.innerHTML = '';
+                const nextLevel = Math.min(gameState.currentLevel + 1, LEVELS.length);
+                startGame(nextLevel);
+            });
+        }
         document.getElementById('restart-btn').addEventListener('click', () => {
             ui.resultModal.classList.remove('active');
             ui.newAchievements.innerHTML = '';
@@ -993,6 +996,14 @@
         const level = LEVELS[gameState.currentLevel - 1];
         const duration = (Date.now() - gameState.startTime) / 1000;
 
+        // Calculate Time Bonus (10 points per second left)
+        let timeBonus = 0;
+        let rawScore = gameState.score;
+        if (success) {
+            timeBonus = Math.max(0, gameState.timeLeft * 10);
+            gameState.score += timeBonus;
+        }
+
         let stars = 0;
         if (success) {
             if (gameState.mistakes === 0) stars = 3;
@@ -1038,9 +1049,13 @@
         }
 
         // En Yüksek Skor Kontrolü ve Güncellemesi
+        const recordBadge = document.getElementById('new-record-badge');
+        if (recordBadge) recordBadge.classList.add('hidden'); // Reset
+
         if (gameState.score > playerData.highScore) {
             playerData.highScore = gameState.score;
             localStorage.setItem('cm_high_score', playerData.highScore);
+            if (recordBadge) recordBadge.classList.remove('hidden');
         }
 
         // Toplam Skor Güncelleme
@@ -1049,7 +1064,7 @@
         updatePlayerUI(); // UI'daki toplam skoru güncelle
 
         ui.starsDisplay.innerHTML = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
-        ui.finalScore.textContent = gameState.score;
+        ui.finalScore.textContent = rawScore;
 
         // Toplam Skor elementini de güncelle (oyun sonu modalında)
         const totalScoreElement = document.getElementById('total-score');
@@ -1057,10 +1072,27 @@
             totalScoreElement.textContent = gameState.score;
         }
 
+        // Update Time Bonus UI
+        const timeBonusEl = document.getElementById('time-bonus');
+        const timeLeftEl = document.getElementById('time-left-display');
+
+        if (timeBonusEl) timeBonusEl.textContent = timeBonus;
+        if (timeLeftEl) {
+            const mins = Math.floor(gameState.timeLeft / 60);
+            const secs = gameState.timeLeft % 60;
+            timeLeftEl.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
         ui.earnedXp.textContent = xpGained;
 
         sounds.complete();
         createParticles(window.innerWidth / 2, window.innerHeight / 2, 'star', 100);
+
+        // Update Level Subtitle
+        const levelSubtitle = document.getElementById('level-subtitle');
+        if (levelSubtitle) {
+            levelSubtitle.textContent = `Sektör ${gameState.currentLevel} Madencilik Tamamlandı`;
+        }
 
         ui.resultModal.classList.add('active');
         renderLevels();
@@ -1086,6 +1118,16 @@
     window.addEventListener('resize', () => {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
+    });
+
+    // DEV SHORTCUT: Sol Shift tuşu ile oyunu otomatik bitir (geliştirme amaçlı)
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Shift' && e.location === 1) { // location 1 = sol shift
+            if (screens.game.classList.contains('active') && gameState.activePrime !== null) {
+                console.log('[DEV] Sol Shift basıldı - Oyun otomatik tamamlanıyor...');
+                endGame(true);
+            }
+        }
     });
 
     // Initialize game
