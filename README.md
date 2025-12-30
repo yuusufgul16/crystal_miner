@@ -6,6 +6,7 @@
 
 ## 🎮 Oyun Hakkında
 
+
 Galaksinin en iyi madencisi olmaya hazır mısın?
 Görevin: Bir "Kristal" (Asal Sayı) seçmek ve onun güvenli bir şekilde çıkarılmasını sağlamak için "Kayaları" (Katlarını) temizlemek.
 
@@ -13,6 +14,8 @@ Görevin: Bir "Kristal" (Asal Sayı) seçmek ve onun güvenli bir şekilde çık
 *   **Kayalar (Katlar):** Seçtiğin kristalin (sayının) tüm katları birer kayadır. Onları tek tek seçerek temizlemelisin.
 *   **Kombolar:** Hata yapmadan ardışık olarak kayaları temizle ve kombo puanları kazan!
 *   **Güçlendirmeler:** Zorlandığın anlarda Yıldırım, Büyüteç, Zaman ve Dinamit gibi özel güçlerini kullan.
+
+Oyunu test etmek için: https://yuusufgul16.github.io/crystal_miner/
 
 ## 🚀 Özellikler
 
