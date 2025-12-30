@@ -37,7 +37,11 @@ Katkılarınızı bekliyoruz! Bir hata bulursanız veya yeni bir özellik ekleme
 
 ## 📄 Lisans
 
-Bu proje MIT Lisansı altında sunulmaktadır. Detaylar için `LICENSE` dosyasına bakabilirsiniz.
+This project is source-available and free for personal and educational use.
+
+🚫 Commercial use is not allowed without permission.
+
+If you want to use this project commercially, please contact me.
 
 ---
 *Geliştirici: Yusuf GÜL*
